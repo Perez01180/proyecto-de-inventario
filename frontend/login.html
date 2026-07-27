@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="d-flex align-items-center py-4 bg-body-tertiary" data-bs-theme="dark">
+
+    <main class="form-signin w-100 m-auto">
+        <form id="form-login">
+
+            <h1 class="h3 mb-3 fw-normal text-center">Inicio de sesión</h1>
+
+            <!-- Input Email -->
+            <div class="form-floating">
+                <input type="text" class="form-content form-control" id="login-username"
+                    placeholder="name@example.com">
+                <label for="login-username">nombre de usuario</label>
+            </div>
+
+            <!-- Input Password -->
+            <div class="form-floating">
+                <input type="password" class="form-control" id="login-password" placeholder="Password">
+                <label for="login-password">contraseña</label>
+            </div>
+
+            <!-- Botón -->
+            <button class="btn btn-primary w-100 py-2" type="submit">Iniciar sesión</button>
+        </form>
+    </main>
+    <script>
+        const formLogin = document.getElementById("form-login");
+        const loginPassword = document.getElementById("login-password");
+        const loginUsername = document.getElementById("login-username");
+
+        formLogin.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const password = loginPassword.value;
+            const username = loginUsername.value;
+            const response = await fetch("http://localhost:8080/login", {
+                method: "post",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({ password, username })
+            })
+            const data = await response.json();
+
+            if(response.status === 404){
+                alert(data.message)
+            } else{
+                localStorage.setItem("usuario-logueado", JSON.stringify({ userId: data.id, isLogged: true }));
+                window.location.href = "/index.html";
+            }
+            
+        });
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
+    </script>
+</body>
+
+</html>

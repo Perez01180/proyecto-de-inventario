@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="d-flex align-items-center py-4 bg-body-tertiary" data-bs-theme="dark">
+
+    <main class="form-signin w-100 m-auto">
+        <form id="form-register">
+
+            <h1 class="h3 mb-3 fw-normal text-center">Registro</h1>
+
+            <div class="form-floating " >
+                <input type="text" class="form-content form-control" id="name-register" placeholder="name">
+                <label for="name-register">nombre</label>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input type="text" class="form-content form-control" id="lastname-register" placeholder="lastname">
+                <label for="lastname-register">apelido</label>
+            </div>
+
+            <div class="form-floating">
+                <input type="number" class="form-content form-control" id="dni-register" placeholder="dni">
+                <label for="dni-register">dni</label>
+            </div>
+
+            <!-- Input username -->
+            <div class="form-floating">
+                <input type="text" class="form-content form-control" id="username-register" placeholder="username">
+                <label for="username-register">nombre de usuario</label>
+            </div>
+
+            <!-- Input Password -->
+            <div class="form-floating">
+                <input type="password" class="form-control" id="password-register" placeholder="Password">
+                <label for="password-register">contraseña</label>
+            </div>
+            
+            <!-- Botón -->
+            <button class="btn btn-primary w-100 py-2" type="submit">Registrar usuario</button>
+        </form>
+    </main>
+
+    <script>
+        const formRegister = document.getElementById("form-register");
+        const nameRegister = document.getElementById("name-register");
+        const lastnameRegister = document.getElementById("lastname-register");
+        const dniRegister = document.getElementById("dni-register")
+        const usernameRegister = document.getElementById("username-register");
+        const passwordRegister = document.getElementById("password-register");
+
+        formRegister.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const name = nameRegister.value;
+            const lastname = lastnameRegister.value;
+            const dni = dniRegister.value;
+            const username = usernameRegister.value;
+            const password = passwordRegister.value;
+
+            const response = await fetch("http://localhost:8080/register", {
+                method: "post",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({ name, lastname, dni , username, password })
+            });
+
+            const data = await response.json();
+
+            window.location.href = "login.html";
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

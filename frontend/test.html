@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 1 · ABM Backend (Pizarrón)</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --border: #d8d4cc;
+    --accent: #1a1a2e;
+    --green: #1a6b3a;
+    --green-bg: #edf7f1;
+    --red: #8b1a1a;
+    --red-bg: #fdf0f0;
+    --blue: #1a3a6b;
+    --blue-bg: #f0f4fd;
+    --yellow-bg: #fdf8ed;
+    --yellow: #7a5c00;
+    --muted: #6b6860;
+    --code-bg: #1e1e2e;
+    --code-text: #cdd6f4;
+    --kw: #cba6f7;
+    --fn: #89b4fa;
+    --str: #a6e3a1;
+    --num: #fab387;
+    --cm: #6c7086;
+    --obj: #f9e2af;
+    --var2: #89dceb;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'IBM Plex Sans', sans-serif; background: var(--bg); color: var(--accent); line-height: 1.7; font-size: 15px; }
+  header { background: var(--accent); color: white; padding: 2.5rem 3rem; }
+  header .tag { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; background: #ffffff20; padding: 0.2rem 0.6rem; border-radius: 3px; letter-spacing: 0.08em; display: inline-block; margin-bottom: 1rem; }
+  header h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.5rem; }
+  header p { color: #ffffffaa; font-size: 0.95rem; }
+  .container { max-width: 860px; margin: 0 auto; padding: 2.5rem 2rem; }
+  .section { margin-bottom: 3rem; }
+  h2 { font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.6rem; }
+  h2::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.2rem; }
+  @media(max-width:600px){ .cards{ grid-template-columns: 1fr; } }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem; }
+  .card h3 { font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+  .card p { font-size: 0.9rem; color: var(--muted); }
+  .card.green { border-left: 3px solid var(--green); }
+  .card.blue  { border-left: 3px solid var(--blue); }
+  .card.green h3 { color: var(--green); }
+  .card.blue  h3 { color: var(--blue); }
+  .flow { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; }
+  .flow-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; }
+  .flow-steps { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+  .step { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.5rem 0.9rem; font-size: 0.83rem; text-align: center; }
+  .step small { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: var(--muted); margin-bottom: 0.1rem; }
+  .step strong { font-weight: 600; }
+  .arrow { color: var(--muted); }
+  .code-block { border-radius: 8px; overflow: hidden; margin: 1rem 0; border: 1px solid #2a2a3e; }
+  .code-header { background: #16162a; padding: 0.5rem 1.2rem; display: flex; justify-content: space-between; align-items: center; }
+  .code-filename { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: #89b4fa; }
+  .code-note { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: #6c7086; }
+  pre { background: var(--code-bg); color: var(--code-text); padding: 1.4rem; overflow-x: auto; font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; line-height: 1.75; tab-size: 2; }
+  .kw  { color: var(--kw); }
+  .fn  { color: var(--fn); }
+  .str { color: var(--str); }
+  .num { color: var(--num); }
+  .cm  { color: var(--cm); font-style: italic; }
+  .obj { color: var(--obj); }
+  .v   { color: var(--var2); }
+  .callout { border-radius: 8px; padding: 0.9rem 1.1rem; margin: 1rem 0; font-size: 0.88rem; display: flex; gap: 0.7rem; }
+  .callout.warn { background: var(--yellow-bg); border: 1px solid #e8d9a0; color: var(--yellow); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.87rem; margin: 1rem 0; background: var(--surface); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  th { background: var(--bg); padding: 0.65rem 1rem; text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--border); }
+  td { padding: 0.65rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td code { font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; background: var(--bg); padding: 0.1rem 0.35rem; border-radius: 3px; border: 1px solid var(--border); }
+  .activity { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .activity-head { background: var(--green-bg); border-bottom: 1px solid #b0ddc0; padding: 1rem 1.5rem; display: flex; align-items: center; gap: 0.8rem; }
+  .activity-head h3 { font-size: 0.95rem; color: var(--green); }
+  .tag-badge { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; background: var(--green); color: white; padding: 0.15rem 0.5rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .task-list { list-style: none; }
+  .task-list li { padding: 0.8rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; display: flex; align-items: flex-start; gap: 0.8rem; }
+  .task-list li:last-child { border-bottom: none; }
+  .task-n { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; background: var(--bg); border: 1px solid var(--border); color: var(--muted); padding: 0.1rem 0.4rem; border-radius: 3px; flex-shrink: 0; margin-top: 0.15rem; }
+  .lvl { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; padding: 0.12rem 0.45rem; border-radius: 100px; font-weight: 600; text-transform: uppercase; margin-left: auto; flex-shrink: 0; }
+  .easy   { background: var(--green-bg);  color: var(--green);  border: 1px solid #b0ddc0; }
+  .medium { background: var(--yellow-bg); color: var(--yellow); border: 1px solid #e8d9a0; }
+  .hard   { background: var(--red-bg);    color: var(--red);    border: 1px solid #f0c0c0; }
+  .tree { background: var(--code-bg); color: var(--code-text); border-radius: 8px; padding: 1.3rem 1.5rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; line-height: 2; border: 1px solid #2a2a3e; }
+  .tree .dir { color: #89b4fa; }
+  .tree .hi  { color: #a6e3a1; }
+  .tree .dim { color: #6c7086; }
+  code { font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; background: var(--bg); padding: 0.1rem 0.35rem; border-radius: 3px; border: 1px solid var(--border); color: var(--blue); }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+  footer { border-top: 1px solid var(--border); padding: 1.5rem 3rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: var(--muted); display: flex; justify-content: space-between; }
+
+  .callout.info { background: var(--blue-bg); border: 1px solid #b8cfe0; color: var(--blue); }
+  .callout.tip { background: var(--green-bg); border: 1px solid #b0ddc0; color: var(--green); }
+  ul.dense { margin: 0.5rem 0 0.5rem 1.2rem; }
+  ul.dense li { margin-bottom: 0.35rem; font-size: 0.88rem; }
+  .http-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; font-weight: 600; color: white; margin-right: 4px; }
+  .http-get    { background: #2d7d46; }
+  .http-post   { background: #2563eb; }
+  .http-put    { background: #c27803; }
+  .http-delete { background: #c02d2d; }
+  .code-inline { font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; background: var(--surface); padding: 1px 6px; border-radius: 4px; border: 1px solid var(--border); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+  table.thin td, table.thin th { padding: 0.5rem 0.7rem; font-size: 0.82rem; }
+  .step-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+  .step-box .step-num { display: inline-block; width: 28px; height: 28px; background: var(--blue); color: white; border-radius: 50%; text-align: center; line-height: 28px; font-size: 0.8rem; font-weight: 700; margin-right: 0.5rem; }
+  .step-box h4 { display: inline; font-size: 0.95rem; margin: 0; }
+  .step-box p { margin: 0.5rem 0 0 0; font-size: 0.85rem; }
+  .step-box ul { margin: 0.5rem 0 0 1.5rem; font-size: 0.85rem; }
+  .step-box ul li { margin-bottom: 0.3rem; }
+  .analogy { background: #fff8e1; border-left: 4px solid #c27803; padding: 0.8rem 1rem; border-radius: 0 6px 6px 0; margin: 0.8rem 0; font-size: 0.88rem; }
+  .analogy strong { color: #92400e; }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">7mo año · Clase 1 · Backend</div>
+  <h1>ABM de Usuarios<br>Rutas, Middleware y Permisos</h1>
+  <p>Express · MySQL · Router · requireAuth / requireRole · GET / POST / PUT / DELETE</p>
+</header>
+
+<div class="container">
+
+<!-- ===== 0 ===== -->
+<div class="section">
+  <h2>0 · ¿Qué es un Router en Express?</h2>
+
+  <div class="analogy">
+    <strong>🧠 Analogía:</strong> El <strong>server.js</strong> es el portero del edificio. Los <strong>routers</strong> son los encargados de cada piso: uno atiende autenticación, otro el panel, otro los usuarios. Cada uno sabe lo suyo, no se mezclan.
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">1</span><h4>Crear el archivo <code>routes/usuarios.js</code></h4>
+    <p>Siempre tiene esta estructura:</p>
+    <div class="code-block" style="margin:0.5rem 0 0 0;"><pre><span class="kw">const</span> <span class="v">express</span> = <span class="fn">require</span>(<span class="str">'express'</span>);
+<span class="kw">const</span> <span class="v">router</span>  = <span class="v">express</span>.<span class="fn">Router</span>();
+<span class="kw">const</span> <span class="v">db</span>      = <span class="fn">require</span>(<span class="str">'../db'</span>);
+
+<span class="cm">// acá van las rutas...</span>
+
+<span class="v">module</span>.<span class="obj">exports</span> = <span class="v">router</span>;</pre></div>
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">2</span><h4>Registrar el router en <code>server.js</code></h4>
+    <div class="code-block" style="margin:0.5rem 0 0 0;"><pre><span class="kw">const</span> <span class="v">usuariosRoutes</span> = <span class="fn">require</span>(<span class="str">'./routes/usuarios'</span>); <span class="cm">// 🆕</span>
+
+<span class="v">app</span>.<span class="fn">use</span>(<span class="str">'/auth'</span>,      <span class="v">authRoutes</span>);
+<span class="v">app</span>.<span class="fn">use</span>(<span class="str">'/dashboard'</span>,  <span class="v">dashRoutes</span>);
+<span class="v">app</span>.<span class="fn">use</span>(<span class="str">'/usuarios'</span>,   <span class="v">usuariosRoutes</span>); <span class="cm">// 🆕</span></pre></div>
+    <p style="margin-top:0.4rem;font-size:0.82rem;color:var(--muted);">⚠️ Las rutas dentro de <code>usuarios.js</code> NO llevan <code>/usuarios</code>. El prefijo ya lo pone <code>server.js</code>.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">3</span><h4>Cada método HTTP tiene su función en Express</h4>
+    <table class="thin">
+      <thead><tr><th>Operación</th><th>SQL</th><th>Express</th></tr></thead>
+      <tbody>
+        <tr><td><span class="http-badge http-get">GET</span> Leer</td><td><code>SELECT</code></td><td><code>router.get('/', ...)</code></td></tr>
+        <tr><td><span class="http-badge http-post">POST</span> Crear</td><td><code>INSERT</code></td><td><code>router.post('/', ...)</code></td></tr>
+        <tr><td><span class="http-badge http-put">PUT</span> Modificar</td><td><code>UPDATE</code></td><td><code>router.put('/:id', ...)</code></td></tr>
+        <tr><td><span class="http-badge http-delete">DELETE</span> Eliminar</td><td><code>DELETE</code></td><td><code>router.delete('/:id', ...)</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">4</span><h4>Parámetros de ruta: <code>:id</code></h4>
+    <p>Los dos puntos indican una <strong>variable</strong> en la URL. Express la captura en <code>req.params</code>.</p>
+    <table class="thin">
+      <thead><tr><th>URL real</th><th>Patrón</th><th><code>req.params</code></th></tr></thead>
+      <tbody>
+        <tr><td><code>/usuarios/5</code></td><td><code>/usuarios/:id</code></td><td><code>{ id: '5' }</code></td></tr>
+        <tr><td><code>/usuarios/32</code></td><td><code>/usuarios/:id</code></td><td><code>{ id: '32' }</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">5</span><h4>Encadenar middlewares</h4>
+    <p>Una ruta puede tener varios filtros antes de llegar al código final:</p>
+    <div class="code-block" style="margin:0.5rem 0 0 0;"><pre><span class="v">router</span>.<span class="fn">post</span>(<span class="str">'/'</span>, <span class="v">requireAuth</span>, <span class="fn">requireRole</span>(<span class="str">'admin'</span>, <span class="str">'superadmin'</span>), (<span class="v">req</span>, <span class="v">res</span>) => {
+  <span class="cm">// si llegó hasta acá: está logueado Y tiene el rol necesario</span>
+});</pre></div>
+    <p style="margin-top:0.4rem;font-size:0.82rem;color:var(--muted);">Cada middleware decide si llamar a <code>next()</code> (pasar al siguiente) o cortar la cadena.</p>
+  </div>
+
+  <div class="callout info">
+    <span>⚠️</span>
+    <div>Los formularios HTML solo soportan <strong>GET</strong> y <strong>POST</strong>. Para PUT y DELETE usamos <code>fetch()</code> desde JavaScript.</div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ===== 1 ===== -->
+<div class="section">
+  <h2>1 · Middleware de roles — <code>requireRole</code></h2>
+
+  <div class="analogy">
+    <strong>🧠 Analogía:</strong> Un recital tiene dos controles. <strong>Puerta 1:</strong> ¿tenés entrada? → <code>requireAuth</code>. <strong>Puerta 2:</strong> ¿tenés pase VIP para esta zona? → <code>requireRole</code>. Algunas zonas dejan pasar a cualquiera con entrada, otras solo a VIP.
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">1</span><h4>¿Por qué necesitamos roles?</h4>
+    <p>No todos los usuarios logueados pueden hacer todo:</p>
+    <ul>
+      <li>Un <strong>alumno</strong> no debería poder borrar a otros usuarios.</li>
+      <li>Un <strong>admin</strong> no debería poder cambiar roles (solo el superadmin).</li>
+      <li>Algunas rutas son para cualquiera, otras solo para ciertos roles.</li>
+    </ul>
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">2</span><h4>El código — Lo agregamos en <code>middleware/auth.js</code></h4>
+    <div class="code-block" style="margin:0.5rem 0 0 0;"><pre><span class="cm">// requireAuth ya lo tenemos (verifica sesión)</span>
+<span class="kw">function</span> <span class="fn">requireAuth</span>(<span class="v">req</span>, <span class="v">res</span>, <span class="v">next</span>) {
+  <span class="kw">if</span> (<span class="v">req</span>.<span class="obj">session</span> && <span class="v">req</span>.<span class="obj">session</span>.<span class="obj">userId</span>) {
+    <span class="fn">next</span>(); <span class="cm">// logueado → pasar</span>
+  } <span class="kw">else</span> {
+    <span class="v">res</span>.<span class="fn">redirect</span>(<span class="str">'/login.html'</span>); <span class="cm">// no logueado → rebotado</span>
+  }
+}
+
+<span class="cm">// 🆕 requireRole: recibe una lista de roles y devuelve un middleware</span>
+<span class="kw">function</span> <span class="fn">requireRole</span>(<span class="v">...</span><span class="v">roles</span>) {
+  <span class="kw">return</span> (<span class="v">req</span>, <span class="v">res</span>, <span class="v">next</span>) => {
+    <span class="kw">if</span> (<span class="v">roles</span>.<span class="fn">includes</span>(<span class="v">req</span>.<span class="obj">session</span>.<span class="obj">rol</span>)) {
+      <span class="fn">next</span>(); <span class="cm">// su rol está en la lista → pasar</span>
+    } <span class="kw">else</span> {
+      <span class="v">res</span>.<span class="fn">status</span>(<span class="num">403</span>).<span class="fn">json</span>({ <span class="obj">error</span>: <span class="str">'No tenés permiso para esta acción'</span> });
+    }
+  };
+}
+
+<span class="v">module</span>.<span class="obj">exports</span> = { <span class="obj">requireAuth</span>, <span class="obj">requireRole</span> }; <span class="cm">// 🆕 exportamos ambos</span></pre></div>
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">3</span><h4>¿Por qué es una función que devuelve una función?</h4>
+    <p>Porque necesitamos que sea <strong>configurable</strong>. Cada ruta necesita una lista distinta de roles permitidos:</p>
+    <table class="thin">
+      <thead><tr><th>Ruta</th><th>Middleware</th><th>Roles que pueden</th></tr></thead>
+      <tbody>
+        <tr><td><code>POST /usuarios</code></td><td><code>requireRole('admin', 'superadmin')</code></td><td>admin y superadmin</td></tr>
+        <tr><td><code>DELETE /usuarios/:id</code></td><td><code>requireRole('superadmin')</code></td><td>solo superadmin</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:0.4rem;font-size:0.82rem;color:var(--muted);">Si fuera un middleware fijo, no podríamos cambiar los roles permitidos en cada ruta.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">4</span><h4>Tabla completa: ¿quién puede qué?</h4>
+    <table class="thin">
+      <thead><tr><th>Acción</th><th>usuario</th><th>admin</th><th>superadmin</th></tr></thead>
+      <tbody>
+        <tr><td>Ver usuarios</td><td style="color:var(--blue);font-weight:600;">Solo su perfil</td><td style="color:var(--green);">✅ Todos</td><td style="color:var(--green);">✅ Todos</td></tr>
+        <tr><td>Crear usuario</td><td style="color:var(--red);">❌</td><td style="color:var(--green);">✅ (rol forzado)</td><td style="color:var(--green);">✅ (elige rol)</td></tr>
+        <tr><td>Modificar usuario</td><td style="color:var(--red);">❌</td><td style="color:var(--green);">✅ (no cambia rol)</td><td style="color:var(--green);">✅ (cambia rol)</td></tr>
+        <tr><td>Eliminar usuario</td><td style="color:var(--red);">❌</td><td style="color:var(--red);">❌</td><td style="color:var(--green);">✅</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr>
+
+<!-- ===== 2 ===== -->
+<div class="section">
+  <h2>2 · GET /usuarios — Listar</h2>
+
+  <div class="analogy">
+    <strong>🧠 Analogía:</strong> Una oficina con empleados. <strong>El jefe y el gerente</strong> pueden ver la lista completa. <strong>El empleado raso</strong> solo ve su propia ficha.
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">1</span><h4>Comportamiento según el rol</h4>
+    <p>El mismo endpoint <code>GET /usuarios</code> hace cosas distintas según quién lo pide:</p>
+    <ul>
+      <li><strong>usuario:</strong> solo ve su propio perfil → <code>WHERE id = req.session.userId</code></li>
+      <li><strong>admin y superadmin:</strong> ven todos → <code>SELECT</code> sin WHERE</li>
+    </ul>
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">2</span><h4>El código</h4>
+    <div class="code-block" style="margin:0.5rem 0 0 0;"><pre><span class="v">router</span>.<span class="fn">get</span>(<span class="str">'/'</span>, <span class="v">requireAuth</span>, (<span class="v">req</span>, <span class="v">res</span>) => {
+  <span class="kw">if</span> (<span class="v">req</span>.<span class="obj">session</span>.<span class="obj">rol</span> === <span class="str">'usuario'</span>) {
+    <span class="cm">// usuario normal: solo su perfil</span>
+    <span class="v">db</span>.<span class="fn">query</span>(
+      <span class="str">'SELECT id, nombre, apellido, dni, telefono, direccion, usuario, rol FROM usuarios WHERE id = ?'</span>,
+      [<span class="v">req</span>.<span class="obj">session</span>.<span class="obj">userId</span>], (<span class="v">err</span>, <span class="v">resu</span>) => {
+        <span class="kw">if</span> (<span class="v">err</span>) <span class="kw">return</span> <span class="v">res</span>.<span class="fn">status</span>(<span class="num">500</span>).<span class="fn">json</span>({ <span class="obj">error</span>: <span class="str">'Error del servidor'</span> });
+        <span class="v">res</span>.<span class="fn">json</span>(<span class="v">resu</span>);
+      }
+    );
+  } <span class="kw">else</span> {
+    <span class="cm">// admin y superadmin: ven todos</span>
+    <span class="v">db</span>.<span class="fn">query</span>(
+      <span class="str">'SELECT id, nombre, apellido, dni, telefono, direccion, usuario, rol FROM usuarios'</span>,
+      (<span class="v">err</span>, <span class="v">resu</span>) => {
+        <span class="kw">if</span> (<span class="v">err</span>) <span class="kw">return</span> <span class="v">res</span>.<span class="fn">status</span>(<span class="num">500</span>).<span class="fn">json</span>({ <span class="obj">error</span>: <span class="str">'Error del servidor'</span> });
+        <span class="v">res</span>.<span class="fn">json</span>(<span class="v">resu</span>);
+      }
+    );
+  }
+});</pre></div>
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">3</span><h4>Dos detalles importantes</h4>
+    <ul>
+      <li><strong>No lleva <code>requireRole</code>:</strong> todos los logueados pueden consultar.</li>
+      <li><strong>No devolvemos la contraseña:</strong> el SELECT pide solo <code>id, nombre, apellido, dni, telefono, direccion, usuario, rol</code>.</li>
+    </ul>
+  </div>
+</div>
+
+<hr>
+
+<!-- ===== 3 ===== -->
+<div class="section">
+  <h2>3 · POST /usuarios — Crear</h2>
+
+  <div class="analogy">
+    <strong>🧠 Analogía:</strong> Solo el <strong>gerente (admin)</strong> y el <strong>jefe (superadmin)</strong> pueden contratar gente nueva. El gerente siempre contrata empleados rasos. El jefe puede contratar gerentes también.
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">1</span><h4>¿Quién puede crear?</h4>
+    <p>Solo <code>admin</code> y <code>superadmin</code>. Por eso usamos <code>requireRole('admin', 'superadmin')</code>.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">2</span><h4>Validación de campos obligatorios</h4>
+    <p><strong>Siempre validamos en el servidor</strong>, aunque el frontend también valide. ¿Por qué? Porque el frontend se puede saltar (consola del navegador, Postman). El servidor es la última defensa.</p>
+    <table class="thin">
+      <thead><tr><th>Campo</th><th>¿Obligatorio?</th></tr></thead>
+      <tbody>
+        <tr><td><code>nombre</code></td><td style="color:var(--red);font-weight:600;">Sí</td></tr>
+        <tr><td><code>apellido</code></td><td style="color:var(--red);font-weight:600;">Sí</td></tr>
+        <tr><td><code>usuario</code></td><td style="color:var(--red);font-weight:600;">Sí</td></tr>
+        <tr><td><code>password</code></td><td style="color:var(--red);font-weight:600;">Sí</td></tr>
+        <tr><td><code>dni</code></td><td>No (opcional)</td></tr>
+        <tr><td><code>telefono</code></td><td>No (opcional)</td></tr>
+        <tr><td><code>direccion</code></td><td>No (opcional)</td></tr>
+        <tr><td><code>fechaNacimiento</code></td><td>No (opcional)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">3</span><h4>¿Qué rol se asigna al nuevo usuario?</h4>
+    <ul>
+      <li><strong>Admin crea:</strong> el rol se fuerza a <code>'usuario'</code>. No puede elegir.</li>
+      <li><strong>Superadmin crea:</strong> si manda <code>rol</code> en el body, lo usa. Si no, por defecto <code>'usuario'</code>.</li>
+    </ul>
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">4</span><h4>El código</h4>
+    <div class="code-block" style="margin:0.5rem 0 0 0;"><pre><span class="v">router</span>.<span class="fn">post</span>(<span class="str">'/'</span>, <span class="v">requireAuth</span>, <span class="fn">requireRole</span>(<span class="str">'admin'</span>, <span class="str">'superadmin'</span>), (<span class="v">req</span>, <span class="v">res</span>) => {
+  <span class="kw">const</span> { <span class="v">nombre</span>, <span class="v">apellido</span>, <span class="v">dni</span>, <span class="v">telefono</span>, <span class="v">direccion</span>, <span class="v">usuario</span>, <span class="v">fechaNacimiento</span>, <span class="v">password</span> } = <span class="v">req</span>.<span class="obj">body</span>;
+
+  <span class="cm">// 1️⃣ Validar campos obligatorios</span>
+  <span class="kw">if</span> (!<span class="v">nombre</span> || !<span class="v">apellido</span> || !<span class="v">usuario</span> || !<span class="v">password</span>) {
+    <span class="kw">return</span> <span class="v">res</span>.<span class="fn">status</span>(<span class="num">400</span>).<span class="fn">json</span>({ <span class="obj">error</span>: <span class="str">'Nombre, apellido, usuario y contraseña son obligatorios'</span> });
+  }
+
+  <span class="cm">// 2️⃣ Decidir el rol</span>
+  <span class="kw">const</span> <span class="v">rolAsignado</span> = (<span class="v">req</span>.<span class="obj">session</span>.<span class="obj">rol</span> === <span class="str">'superadmin'</span> && <span class="v">req</span>.<span class="obj">body</span>.<span class="obj">rol</span>)
+    ? <span class="v">req</span>.<span class="obj">body</span>.<span class="obj">rol</span> : <span class="str">'usuario'</span>;
+
+  <span class="cm">// 3️⃣ Insertar en la base de datos</span>
+  <span class="v">db</span>.<span class="fn">query</span>(
+    <span class="str">'INSERT INTO usuarios (nombre, apellido, dni, telefono, direccion, usuario, fechaNacimiento, password, rol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'</span>,
+    [<span class="v">nombre</span>, <span class="v">apellido</span>, <span class="v">dni</span> || <span class="kw">null</span>, <span class="v">telefono</span> || <span class="kw">null</span>, <span class="v">direccion</span> || <span class="kw">null</span>, <span class="v">usuario</span>, <span class="v">fechaNacimiento</span> || <span class="kw">null</span>, <span class="v">password</span>, <span class="v">rolAsignado</span>],
+    (<span class="v">err</span>, <span class="v">resu</span>) => {
+      <span class="kw">if</span> (<span class="v">err</span>) {
+        <span class="cm">// 4️⃣ Si el usuario ya existe, MySQL tira ER_DUP_ENTRY</span>
+        <span class="kw">if</span> (<span class="v">err</span>.<span class="obj">code</span> === <span class="str">'ER_DUP_ENTRY'</span>) {
+          <span class="kw">return</span> <span class="v">res</span>.<span class="fn">status</span>(<span class="num">409</span>).<span class="fn">json</span>({ <span class="obj">error</span>: <span class="str">'El usuario ya existe'</span> });
+        }
+        <span class="kw">return</span> <span class="v">res</span>.<span class="fn">status</span>(<span class="num">500</span>).<span class="fn">json</span>({ <span class="obj">error</span>: <span class="str">'Error al crear el usuario'</span> });
+      }
+      <span class="v">res</span>.<span class="fn">status</span>(<span class="num">201</span>).<span class="fn">json</span>({ <span class="obj">success</span>: <span class="kw">true</span>, <span class="obj">id</span>: <span class="v">resu</span>.<span class="obj">insertId</span>, <span class="obj">mensaje</span>: <span class="str">'Usuario creado correctamente'</span> });
+    }
+  );
+});</pre></div>
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">5</span><h4>Respuestas posibles</h4>
+    <table class="thin">
+      <thead><tr><th>Caso</th><th>Código</th><th>Respuesta</th></tr></thead>
+      <tbody>
+        <tr><td>Éxito</td><td style="color:var(--green);font-weight:600;">201 Created</td><td><code>{ success: true, id: 7, mensaje: '...' }</code></td></tr>
+        <tr><td>Faltan campos</td><td style="color:#c27803;font-weight:600;">400 Bad Request</td><td><code>{ error: '...son obligatorios' }</code></td></tr>
+        <tr><td>Usuario duplicado</td><td style="color:#c27803;font-weight:600;">409 Conflict</td><td><code>{ error: 'El usuario ya existe' }</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr>
+
+<!-- ===== 4 ===== -->
+<div class="section">
+  <h2>4 · PUT /usuarios/:id — Modificar</h2>
+
+  <div class="analogy">
+    <strong>🧠 Analogía:</strong> El gerente puede cambiar el sueldo o el horario de un empleado, pero <strong>no puede ascenderlo a gerente</strong>. Solo el jefe asciende gente.
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">1</span><h4>Query dinámica (¿por qué?)</h4>
+    <p>El frontend no siempre manda todos los campos. Si el usuario solo cambió el teléfono, no queremos pisar el resto con vacíos. Armamos el UPDATE <strong>concatenando</strong> solo lo que vino en el body.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">2</span><h4>Regla crítica: el admin NO puede cambiar roles</h4>
+    <p>Si el body incluye <code>rol</code> pero quien llama NO es superadmin → <strong>403 Forbidden</strong>. Esto es seguridad real: no alcanza con ocultar el selector de rol en el frontend.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">3</span><h4>El código</h4>
+    <div class="code-block" style="margin:0.5rem 0 0 0;"><pre><span class="v">router</span>.<span class="fn">put</span>(<span class="str">'/:id'</span>, <span class="v">requireAuth</span>, <span class="fn">requireRole</span>(<span class="str">'admin'</span>, <span class="str">'superadmin'</span>), (<span class="v">req</span>, <span class="v">res</span>) => {
+  <span class="kw">const</span> { <span class="v">nombre</span>, <span class="v">apellido</span>, <span class="v">dni</span>, <span class="v">telefono</span>, <span class="v">direccion</span>, <span class="v">usuario</span>, <span class="v">fechaNacimiento</span>, <span class="v">password</span>, <span class="v">rol</span> } = <span class="v">req</span>.<span class="obj">body</span>;
+
+  <span class="cm">// 🚫 Admin no puede cambiar roles</span>
+  <span class="kw">if</span> (<span class="v">rol</span> && <span class="v">req</span>.<span class="obj">session</span>.<span class="obj">rol</span> !== <span class="str">'superadmin'</span>) {
+    <span class="kw">return</span> <span class="v">res</span>.<span class="fn">status</span>(<span class="num">403</span>).<span class="fn">json</span>({ <span class="obj">error</span>: <span class="str">'Solo el superadmin puede cambiar roles'</span> });
+  }
+
+  <span class="cm">// Armar query dinámica</span>
+  <span class="kw">let</span> <span class="v">sql</span> = <span class="str">'UPDATE usuarios SET nombre=?, apellido=?, dni=?, telefono=?, direccion=?, usuario=?, fechaNacimiento=?'</span>;
+  <span class="kw">let</span> <span class="v">valores</span> = [<span class="v">nombre</span>, <span class="v">apellido</span>, <span class="v">dni</span>, <span class="v">telefono</span>, <span class="v">direccion</span>, <span class="v">usuario</span>, <span class="v">fechaNacimiento</span>];
+
+  <span class="kw">if</span> (<span class="v">password</span> && <span class="v">password</span>.<span class="fn">trim</span>() !== <span class="str">''</span>) {
+    <span class="v">sql</span> += <span class="str">', password=?'</span>;
+    <span class="v">valores</span>.<span class="fn">push</span>(<span class="v">password</span>);
+  }
+
+  <span class="kw">if</span> (<span class="v">rol</span> && <span class="v">req</span>.<span class="obj">session</span>.<span class="obj">rol</span> === <span class="str">'superadmin'</span>) {
+    <span class="v">sql</span> += <span class="str">', rol=?'</span>;
+    <span class="v">valores</span>.<span class="fn">push</span>(<span class="v">rol</span>);
+  }
+
+  <span class="v">sql</span> += <span class="str">' WHERE id=?'</span>;
+  <span class="v">valores</span>.<span class="fn">push</span>(<span class="v">req</span>.<span class="obj">params</span>.<span class="obj">id</span>);
+
+  <span class="v">db</span>.<span class="fn">query</span>(<span class="v">sql</span>, <span class="v">valores</span>, (<span class="v">err</span>, <span class="v">resu</span>) => {
+    <span class="kw">if</span> (<span class="v">err</span>) <span class="kw">return</span> <span class="v">res</span>.<span class="fn">status</span>(<span class="num">500</span>).<span class="fn">json</span>({ <span class="obj">error</span>: <span class="str">'Error al modificar'</span> });
+    <span class="kw">if</span> (<span class="v">resu</span>.<span class="obj">affectedRows</span> === <span class="num">0</span>) {
+      <span class="kw">return</span> <span class="v">res</span>.<span class="fn">status</span>(<span class="num">404</span>).<span class="fn">json</span>({ <span class="obj">error</span>: <span class="str">'Usuario no encontrado'</span> });
+    }
+    <span class="v">res</span>.<span class="fn">json</span>({ <span class="obj">success</span>: <span class="kw">true</span>, <span class="obj">mensaje</span>: <span class="str">'Usuario modificado'</span> });
+  });
+});</pre></div>
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">4</span><h4>Respuestas posibles</h4>
+    <table class="thin">
+      <thead><tr><th>Caso</th><th>Código</th></tr></thead>
+      <tbody>
+        <tr><td>Éxito</td><td style="color:var(--green);font-weight:600;">200 OK</td></tr>
+        <tr><td>Admin intenta cambiar rol</td><td style="color:var(--red);font-weight:600;">403 Forbidden</td></tr>
+        <tr><td>Usuario no encontrado</td><td style="color:var(--red);font-weight:600;">404 Not Found</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr>
+
+<!-- ===== 5 ===== -->
+<div class="section">
+  <h2>5 · DELETE /usuarios/:id — Eliminar</h2>
+
+  <div class="analogy">
+    <strong>🧠 Analogía:</strong> Solo el <strong>jefe (superadmin)</strong> puede despedir gente. El gerente gestiona pero no destruye. Borrar es irreversible.
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">1</span><h4>La operación más restrictiva</h4>
+    <p>Usamos <code>requireRole('superadmin')</code> — uno solo. Ni admin ni usuario pasan este filtro.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">2</span><h4>El código (el más simple)</h4>
+    <div class="code-block" style="margin:0.5rem 0 0 0;"><pre><span class="v">router</span>.<span class="fn">delete</span>(<span class="str">'/:id'</span>, <span class="v">requireAuth</span>, <span class="fn">requireRole</span>(<span class="str">'superadmin'</span>), (<span class="v">req</span>, <span class="v">res</span>) => {
+  <span class="v">db</span>.<span class="fn">query</span>(<span class="str">'DELETE FROM usuarios WHERE id = ?'</span>, [<span class="v">req</span>.<span class="obj">params</span>.<span class="obj">id</span>],
+    (<span class="v">err</span>, <span class="v">resu</span>) => {
+      <span class="kw">if</span> (<span class="v">err</span>) <span class="kw">return</span> <span class="v">res</span>.<span class="fn">status</span>(<span class="num">500</span>).<span class="fn">json</span>({ <span class="obj">error</span>: <span class="str">'Error al eliminar'</span> });
+      <span class="kw">if</span> (<span class="v">resu</span>.<span class="obj">affectedRows</span> === <span class="num">0</span>) {
+        <span class="kw">return</span> <span class="v">res</span>.<span class="fn">status</span>(<span class="num">404</span>).<span class="fn">json</span>({ <span class="obj">error</span>: <span class="str">'Usuario no encontrado'</span> });
+      }
+      <span class="v">res</span>.<span class="fn">json</span>({ <span class="obj">success</span>: <span class="kw">true</span>, <span class="obj">mensaje</span>: <span class="str">'Usuario eliminado'</span> });
+    }
+  );
+});</pre></div>
+  </div>
+
+  <div class="step-box">
+    <span class="step-num">3</span><h4>¿Quién puede borrar?</h4>
+    <table class="thin">
+      <thead><tr><th>Rol</th><th>¿Puede?</th></tr></thead>
+      <tbody>
+        <tr><td>usuario</td><td style="color:var(--red);font-weight:600;">❌ 403</td></tr>
+        <tr><td>admin</td><td style="color:var(--red);font-weight:600;">❌ 403</td></tr>
+        <tr><td>superadmin</td><td style="color:var(--green);font-weight:600;">✅</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr>
+
+<!-- ===== 6 ===== -->
+<div class="section">
+  <h2>6 · Códigos de estado — Resumen</h2>
+
+  <table>
+    <thead><tr><th>Código</th><th>Significado</th><th>¿Cuándo aparece?</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:700;">200 OK</td><td>Éxito</td><td>GET y PUT exitosos</td></tr>
+      <tr><td style="font-weight:700;">201 Created</td><td>Creado</td><td>POST exitoso</td></tr>
+      <tr><td style="font-weight:700;">400 Bad Request</td><td>Datos inválidos</td><td>Faltan campos obligatorios al crear</td></tr>
+      <tr><td style="font-weight:700;">403 Forbidden</td><td>Prohibido</td><td>No tiene el rol necesario; admin intenta cambiar rol</td></tr>
+      <tr><td style="font-weight:700;">404 Not Found</td><td>No encontrado</td><td>El ID no existe en la base de datos</td></tr>
+      <tr><td style="font-weight:700;">409 Conflict</td><td>Conflicto</td><td>Usuario duplicado (ER_DUP_ENTRY)</td></tr>
+      <tr><td style="font-weight:700;">500</td><td>Error interno</td><td>Error de conexión, MySQL, etc.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<hr>
+
+</div>
+
+<footer>
+  <span>clase 1 · abm-usuarios-backend · Node.js + Express + MySQL2</span>
+  <span>router · middleware de roles · GET/POST/PUT/DELETE</span>
+</footer>
+
+</body>
+</html>

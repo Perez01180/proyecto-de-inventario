@@ -30,13 +30,15 @@ function authMiddleware(req, res, next){
     }
 }
 
-function adminMiddleware (req, res, next){
-    if(req.user.role !== "admin"){
-        return res.status(403).json({
-            message : "no tenés permisos para acceder."
-        })
+function adminMiddleware (roles){
+    return (req, res, next) => {
+        if(!roles.includes(req.user.role)){
+            return res.status(403).json({
+                message : "no tenés permisos para acceder."
+            })
+        }
+        next();
     }
-    next();
 }
 
 export {authMiddleware, adminMiddleware}

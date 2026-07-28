@@ -21,7 +21,6 @@ router.get("/:id", async function (req, res){
     })
 });
 
-
 router.get("/", async function (req, res){
     const usersDB = await db.collection("users").get();
     const users = usersDB.docs.map((userDb)=> {
@@ -34,7 +33,7 @@ router.get("/", async function (req, res){
     })
 });
 
-router.put("/:id/role", authMiddleware, adminMiddleware, async function (req, res){
+router.put("/:id/role", authMiddleware, adminMiddleware(["admin", "superadmin"]), async function (req, res){
     const id = req.params.id;
     const role = req.body.role;
     const userDB = await db.collection("users").doc(id);
@@ -54,7 +53,7 @@ router.put("/:id/role", authMiddleware, adminMiddleware, async function (req, re
     })
 })
 
-router.delete("/:id", authMiddleware, adminMiddleware, async function (req, res){
+router.delete("/:id", authMiddleware, adminMiddleware(["superadmin"]), async function (req, res){
     const id = req.params.id;
     const userDB = await db.collection("users").doc(id);
     if(userDB.exists === false){

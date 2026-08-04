@@ -4,8 +4,8 @@ import { authMiddleware, adminMiddleware } from "../middlewares/auth.middleware.
 
 const router = express.Router();
 
-router.get("/:id", async function (req, res){
-    const id = req.params.id;
+router.get("/me", authMiddleware, async function (req, res){
+    const id = req.user.id;
     const userDB = await db.collection("users").doc(id).get();
 
     if(userDB.exists === false){
@@ -53,6 +53,23 @@ router.put("/:id/role", authMiddleware, adminMiddleware(["admin", "superadmin"])
     })
 })
 
+router.get("/:id", async function (req, res){
+    const id = req.params.id;
+    const userDB = await db.collection("users").doc(id).get();
+
+    if(userDB.exists === false){
+        return res.status(404).json({
+            message: "usuario no encontrado"
+        })
+    }
+    
+    res.status(200).json({
+        id: userDB.id,
+        username :  userDB.data().username,
+        role : userDB.data().role
+    })
+});
+
 router.delete("/:id", authMiddleware, adminMiddleware(["superadmin"]), async function (req, res){
     const id = req.params.id;
     const userDB = await db.collection("users").doc(id);
@@ -68,6 +85,7 @@ router.delete("/:id", authMiddleware, adminMiddleware(["superadmin"]), async fun
         id
     })
 })
+
 
 
 export default router;

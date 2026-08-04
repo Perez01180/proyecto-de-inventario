@@ -34,7 +34,8 @@
             <button class="btn btn-primary w-100 py-2" type="submit">Iniciar sesión</button>
         </form>
     </main>
-    <script>
+    <script type="module">
+        import { login, saveToken } from "/js/utils.js"
         const formLogin = document.getElementById("form-login");
         const loginPassword = document.getElementById("login-password");
         const loginUsername = document.getElementById("login-username");
@@ -43,21 +44,17 @@
             event.preventDefault();
             const password = loginPassword.value;
             const username = loginUsername.value;
-            const response = await fetch("http://localhost:8080/login", {
-                method: "post",
-                headers: { "content-type": "application/json" },
-                body: JSON.stringify({ password, username })
-            })
-            const data = await response.json();
-
-            if(response.status === 404){
+        
+            const data = await login(username, password);
+            if(data.status === "error"){
                 alert(data.message)
             } else{
-                localStorage.setItem("usuario-logueado", JSON.stringify({ userId: data.id, isLogged: true }));
+                saveToken(data.payload.token);
                 window.location.href = "/index.html";
             }
             
         });
+
 
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"

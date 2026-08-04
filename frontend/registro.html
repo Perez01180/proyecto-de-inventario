@@ -49,7 +49,8 @@
         </form>
     </main>
 
-    <script>
+    <script type="module">
+        import { register } from "/js/utils.js"
         const formRegister = document.getElementById("form-register");
         const nameRegister = document.getElementById("name-register");
         const lastnameRegister = document.getElementById("lastname-register");
@@ -65,14 +66,8 @@
             const username = usernameRegister.value;
             const password = passwordRegister.value;
 
-            const response = await fetch("http://localhost:8080/register", {
-                method: "post",
-                headers: { "content-type": "application/json" },
-                body: JSON.stringify({ name, lastname, dni , username, password })
-            });
-
-            const data = await response.json();
-
+            const data = await register(name, lastname, dni, username, password);
+            
             window.location.href = "login.html";
         });
     </script>

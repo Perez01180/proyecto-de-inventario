@@ -12,19 +12,26 @@ export async function getUsers(){
     return data.users;
 }
 
-export async function updateUserRole(id, role){
+export async function updateUserRole(id, role, token){
     const response = await fetch(API_BASE + "/users/" + id + "/role", {
         method: "put",
-        headers : {"content-type" : "application/json"},
+        headers : {
+            "Authorization" : "Bearer " + token,
+            "content-type" : "application/json",
+        },
         body : JSON.stringify({ role })
     });
     const data = await response.json();
     return data;
 }
 
-export async function deleteUser(id){
+export async function deleteUser(id, token){
     const response = await fetch(API_BASE + "/users/" + id, {
-        method :  "delete"       
+        method :  "delete",
+        headers : {
+            "Authorization" : "Bearer " + token,
+            "content-type" : "application/json",
+        }      
     });
     const data = await response.json();
     return data; 
@@ -69,4 +76,9 @@ export async function getMyUser(token){
     });
     const data = await response.json();
     return data;
+}
+
+export function deleteToken(){
+    localStorage.removeItem("userToken");
+    
 }

@@ -1,10 +1,10 @@
-import { getUser, getLocalUser, getUsers, updateUserRole, deleteUser } from "./utils.js";
+import { getToken, getMyUser, getUsers, updateUserRole, deleteUser } from "./utils.js";
 
 async function main() {
-    const localUser = getLocalUser();
-    const userLogged = await getUser(localUser.userId);
+    const token = getToken();
+    const myUser = await getMyUser(token);
 
-    if (userLogged.role === "user") {
+    if (myUser.role === "user") {
         window.location.href = "/index.html";
     }
 
@@ -37,21 +37,28 @@ async function main() {
             roleSelect.value = user.role;
 
             saveButton.addEventListener("click", async function () {
-                await updateUserRole(user.id, roleSelect.value);
-                window.location = "/administracion.html"
+                const updateRoleConfirm = confirm("Estás seguro de querer cambiarle el rol a este usuario?");
+                if(updateRoleConfirm === true){
+                    await updateUserRole(user.id, roleSelect.value, token);
+                    window.location = "/administracion.html"
+                }               
             });
 
             saveButton.className = "btn btn-primary"
             saveButton.textContent = "guardar"
 
-            if(userLogged.role === "superadmin"){
+            if(myUser.role === "superadmin" && (user.role === "user" || user.role === "admin")){
                 //boton eliminar
                 const deleteButton = document.createElement("button");
                 deleteButton.textContent = "eliminar"
                 deleteButton.className = "btn btn-danger mx-3"
                 deleteButton.addEventListener("click", async function(){
-                    await deleteUser(user.id);
-                    window.location = "/administracion.html"
+                    
+                    const deleteConfirm = confirm("Estás seguro de querer eliminar a este usuario?");
+                    if (deleteConfirm === true){
+                        await deleteUser(user.id, token);
+                        window.location = "/administracion.html"
+                    }
                 })
                 actionCell.appendChild(deleteButton);
             }

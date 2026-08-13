@@ -42,3 +42,11 @@ body {
 .ocultar-nav{
    display: none 
 }
+
+.nav-loading{
+    display: none;
+}
+
+.mostrar-nav{
+    display: block;
+}

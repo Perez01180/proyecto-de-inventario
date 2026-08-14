@@ -9,11 +9,11 @@ const JWT_SECRET = "miclavesecreta"
 
 router.post("/register", async function (req, res) {
     const { name, lastname, dni, username, password } = req.body || {};
-    //si username o password no existen nos da mensaje de error.
-    if (!username || !password) {
+    //si algun campo no existe nos da mensaje de error.
+    if (!name || !lastname || !dni || !username || !password ) {
         return res.status(400).json({
             status: "error",
-            message: "username y password son obligatorios"
+            message: "Todos los campos son obligatorios"
         })
     }
 
@@ -89,7 +89,8 @@ router.post("/login", async function (req, res) {
         message: "Logueado correctamente",
         payload: {
             id: user.id,
-            token
+            token,
+            role : user.role
         }
     })
 })

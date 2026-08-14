@@ -21,7 +21,7 @@ router.get("/me", authMiddleware, async function (req, res){
     })
 });
 
-router.get("/", async function (req, res){
+router.get("/", authMiddleware, adminMiddleware(["admin", "superadmin"]), async function (req, res){
     const usersDB = await db.collection("users").get();
     const users = usersDB.docs.map((userDb)=> {
         return { id: userDb.id, ...userDb.data() }
@@ -34,26 +34,33 @@ router.get("/", async function (req, res){
 });
 
 router.put("/:id/role", authMiddleware, adminMiddleware(["admin", "superadmin"]), async function (req, res){
+    const permissionRole = [ "user", "admin" ];
     const id = req.params.id;
     const role = req.body.role;
-    const userDB = await db.collection("users").doc(id);
+    if(!permissionRole.includes(role)){
+        return res.status(400).json({
+            message : "Rol invalido."
+        })
+    }
+    const userRef = db.collection("users").doc(id);
+    const user = await userRef.get();
 
-    if(userDB.exists === false){
+    if(!user.exists){
         return res.status(404).json({
-            message: "usuario no encontrado"
+            message: "usuario no encontrado."
         })
     }
 
-    await userDB.update({ role });
+    await userRef.update({ role });
 
     res.status(200).json({
-        message: "Rol actualizado correctamente",
+        message: "Rol actualizado correctamente.",
         id,
         role
     })
 })
 
-router.get("/:id", async function (req, res){
+router.get("/:id", authMiddleware, adminMiddleware(["admin", "superadmin"]),  async function (req, res){
     const id = req.params.id;
     const userDB = await db.collection("users").doc(id).get();
 
@@ -72,13 +79,21 @@ router.get("/:id", async function (req, res){
 
 router.delete("/:id", authMiddleware, adminMiddleware(["superadmin"]), async function (req, res){
     const id = req.params.id;
-    const userDB = await db.collection("users").doc(id);
-    if(userDB.exists === false){
-        return res.status(404).json({
-            message: "usuario no encontrado"
+    const userId = req.user.id;
+    if(userId === id){
+        return res.status(400).json({
+            message : "No te puedes borrar a ti mismo."
         })
     }
-    await userDB.delete();
+
+    const userRef = db.collection("users").doc(id);
+    const user = await userRef.get();
+    if(!user.exists){
+        return res.status(404).json({
+            message: "usuario no encontrado."
+        })
+    }
+    await userRef.delete();
     
     res.status(200).json({
         message : "Usuario eliminado correctamente",

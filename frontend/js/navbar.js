@@ -1,4 +1,4 @@
-import { getMyUser, deleteToken, getUser, getToken} from "./utils.js"
+import { getMyUser, deleteToken, getUser, getToken, getRole} from "./utils.js"
 
 const navLogOut = document.getElementById("logOut");
 const navAdmin = document.getElementById("admin");
@@ -9,26 +9,19 @@ navLogOut.addEventListener("click", function(){
     window.location = "/index.html";
 })
 
+const token = getToken();
+const role = getRole();
 
-document.addEventListener("DOMContentLoaded", async function(){
-    const token = getToken();
-    const navLogin = document.getElementById("login");
-    
-    if(token){
-        navLogin.classList.add("ocultar-nav")       
-        navLogOut.classList.remove("nav-loading")
-        const user = await getMyUser(token);
-        if(user.role === "user"){
-            navAdmin.classList.add("ocultar-nav")
-        }else{
-            navAdmin.classList.remove("nav-loading")    
-        }
-    }else{
-        navLogin.classList.remove("nav-loading")
-        navLogOut.classList.add("ocultar-nav")
+if(token){
+    navLogin.classList.add("ocultar-nav")       
+    navLogOut.classList.remove("nav-loading")
+    if(role === "user"){
         navAdmin.classList.add("ocultar-nav")
+    }else{
+        navAdmin.classList.remove("nav-loading")    
     }
-})
-
-
-
+}else{
+    navLogin.classList.remove("nav-loading")
+    navLogOut.classList.add("ocultar-nav")
+    navAdmin.classList.add("ocultar-nav")
+}

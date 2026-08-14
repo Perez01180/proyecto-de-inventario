@@ -35,7 +35,7 @@
         </form>
     </main>
     <script type="module">
-        import { login, saveToken } from "/js/utils.js"
+        import { login, saveSession } from "/js/utils.js"
         const formLogin = document.getElementById("form-login");
         const loginPassword = document.getElementById("login-password");
         const loginUsername = document.getElementById("login-username");
@@ -49,7 +49,7 @@
             if(data.status === "error"){
                 alert(data.message)
             } else{
-                saveToken(data.payload.token);
+                saveSession(data.payload.token, data.payload.role);
                 window.location.href = "/index.html";
             }
             

@@ -8,7 +8,7 @@ async function main() {
         window.location.href = "/index.html";
     }
 
-    const users = await getUsers();
+    const users = await getUsers(token);
     //capturamos la etiqueta que va a contener la lista de users
     const usersList = document.getElementById("usersList");
 

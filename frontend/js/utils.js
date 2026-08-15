@@ -96,7 +96,8 @@ export async function getMyUser(token){
     return data;
 }
 
-export function deleteToken(){
+export function deleteSession(){
     localStorage.removeItem("userToken");
+    localStorage.removeItem("userRole");
     
 }

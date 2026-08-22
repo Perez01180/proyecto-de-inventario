@@ -1,10 +1,11 @@
 import express, { Router } from "express";
 import { db } from "../config/firebase.js";
+import bcrypt from "bcrypt";
 import { authMiddleware, adminMiddleware } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.get("/me", authMiddleware, async function (req, res) {
+router.get("/me", authMiddleware, async function (req, res) {   
     const id = req.user.id;
     const userDB = await db.collection("users").doc(id).get();
 
@@ -63,6 +64,43 @@ router.put("/:id/role", authMiddleware, adminMiddleware(["admin", "superadmin"])
         id,
         role
     })
+})
+
+router.put("/:id", authMiddleware, adminMiddleware(["superadmin"]), async function(req, res){
+    const id = req.params.id;
+    const {name, lastname, dni, username, password} = req.body;
+    if(!name || !lastname || !dni || !username){
+        return res.status(400).json({
+            status : "error",
+            message : "Falta completar campos"
+        })
+    }
+    const updates = {name, lastname, dni, username};
+    if(password){
+        const hashedPassword = await bcrypt.hash(password, 10);
+        updates.password= hashedPassword;
+    }
+
+    const userRef = db.collection("users").doc(id);
+    const user = await userRef.get();
+
+    if(!user.exists){
+        return res.status(400).json({
+            message : "usuario no encontrado."
+        })
+    }
+
+    await userRef.update(updates);
+    res.status(200).json({
+        status : "success",
+        message : "información del usuario actualizada.",
+        payload : {
+            id,
+            ...updates
+
+        }
+    })
+
 })
 
 router.get("/:id", authMiddleware, adminMiddleware(["admin", "superadmin"]), async function (req, res) {

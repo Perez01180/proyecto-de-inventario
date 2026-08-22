@@ -37,6 +37,19 @@ export async function updateUserRole(id, role, token){
     return data;
 }
 
+export async function updateUserById(id, updates, token){
+    const response = await fetch(API_BASE + "/users/" + id, {
+        method : "put",
+        headers : {
+            "Authorization" : "Bearer " + token,
+            "content-type" : "application/json",
+        },
+        body : JSON.stringify(updates)
+    });
+    const data = await response.json();
+    return data;
+} 
+
 export async function deleteUser(id, token){
     const response = await fetch(API_BASE + "/users/" + id, {
         method :  "delete",

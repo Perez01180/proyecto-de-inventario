@@ -1,4 +1,20 @@
-import { getToken, getMyUser, getUsers, updateUserRole, deleteUser } from "./utils.js";
+import { getToken, getMyUser, getUsers, updateUserRole, deleteUser, updateUserById } from "./utils.js";
+
+function confirmDeleteUser(id, token) {
+    Swal.fire({
+        title: "Eliminar usuario",
+        theme: "dark",
+        text: "¿Estás seguro de querer eliminar a este usuario?",
+        icon: "warning",
+        showCancelButton: true,
+
+    }).then(async function (result) {
+        if (result.isConfirmed) {
+            await deleteUser(id, token);
+            window.location = "/administracion.html";
+        }
+    })
+}
 
 async function main() {
     const token = getToken();
@@ -13,6 +29,7 @@ async function main() {
     const usersList = document.getElementById("usersList");
 
     usersList.innerHTML = "";
+
 
     users.map((user) => {
         const row = document.createElement("tr");
@@ -36,20 +53,6 @@ async function main() {
             roleSelect.value = user.role;
 
             if (myUserData.payload.role === "superadmin" && (user.role === "user" || user.role === "admin")) {
-                //boton eliminar
-                const deleteButton = document.createElement("button");
-                deleteButton.textContent = "eliminar"
-                deleteButton.className = "btn btn-danger mx-3"
-                deleteButton.addEventListener("click", async function () {
-
-                    const deleteConfirm = confirm("Estás seguro de querer eliminar a este usuario?");
-                    if (deleteConfirm === true) {
-                        await deleteUser(user.id, token);
-                        window.location = "/administracion.html"
-                    }
-                })
-
-                //actionCell.appendChild(deleteButton);
                 const modifyButton = document.createElement("button");
                 modifyButton.textContent = "Modificar";
                 modifyButton.className = "btn btn-secondary mx-3"
@@ -62,7 +65,7 @@ async function main() {
                             <input id = "swal-lastname" value = ${user.lastname} >
                             <input id = "swal-dni" value = ${user.dni} >
                             <input id = "swal-username" value = ${user.username} >
-                            <input id = "swal-password" >
+                            <input id = "swal-password" placeholder = "Nueva contraseña" >
                        `,
                         showConfirmButton: true,
                         showDenyButton: true,
@@ -85,13 +88,15 @@ async function main() {
                             }
                         }
 
-                    }).then(function (result) {
+                    }).then(async function (result) {
                         if (result.isConfirmed) {
-                            console.log(result.value)
-                        }else if(result.isDenied){
-                            console.log("eliminar usuario");
-                        }else{
-                            console.log("operación cancelada")
+                            const updates = result.value;
+
+                            const response = await updateUserById(user.id, updates, token);
+                            window.location = "/administracion.html";
+
+                        } else if (result.isDenied) {
+                            confirmDeleteUser(user.id, token);
                         }
                     })
                 })

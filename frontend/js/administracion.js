@@ -16,6 +16,25 @@ function confirmDeleteUser(id, token) {
     })
 }
 
+function confirmRoleChange(user, role, token) {
+    Swal.fire({
+        title: "Modificar rol del usuario",
+        theme: "dark",
+        text: "¿Estás seguro de cambiarle el rol a este usuario?",
+        icon: "warning",
+        showCancelButton: true,
+
+    }).then(async function (result) {
+        if (result.isConfirmed) {
+            await updateUserRole(user.id, role.value, token);
+            window.location = "/administracion.html";
+            return;
+        }
+        role.value = user.role;
+    })
+
+}
+
 async function main() {
     const token = getToken();
     const myUserData = await getMyUser(token);
@@ -110,11 +129,7 @@ async function main() {
             row.append(usernameCell, roleCell, actionCell);
 
             roleSelect.addEventListener("change", async function (event) {
-                const updateRoleConfirm = confirm("Estás seguro de querer cambiarle el rol a este usuario?");
-                if (updateRoleConfirm === true) {
-                    await updateUserRole(user.id, roleSelect.value, token);
-                    window.location = "/administracion.html"
-                }
+                confirmRoleChange(user, roleSelect, token);
 
             });
         }

@@ -4,6 +4,10 @@ import { db } from "./config/firebase.js";
 import usersRouter from "./routes/users.router.js";
 import { authMiddleware, adminMiddleware } from "./middlewares/auth.middleware.js";
 import authRouter from "./routes/auth.router.js";
+import dotenv from "dotenv";
+
+//Inicializamos las variables de entorno
+dotenv.config();
 
 const app = express();
 

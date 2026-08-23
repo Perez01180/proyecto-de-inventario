@@ -1,5 +1,7 @@
-import admin from "firebase-admin"
-import credential from "../../sistema-de-inventario-7292d-firebase-adminsdk-fbsvc-676b83db15.json" with { type: "json" }
+import admin from "firebase-admin";
+import dotenv from "dotenv";
 
-admin.initializeApp({ credential: admin.credential.cert(credential) });
+dotenv.config();
+
+admin.initializeApp({ credential: admin.credential.applicationDefault()});
 export const db = admin.firestore();

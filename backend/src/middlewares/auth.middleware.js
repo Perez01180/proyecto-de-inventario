@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"
 
-const JWT_SECRET = "miclavesecreta";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 function authMiddleware(req, res, next){
     const authHeader = req.headers.authorization;

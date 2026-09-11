@@ -5,6 +5,7 @@ import usersRouter from "./routes/users.router.js";
 import { authMiddleware, adminMiddleware } from "./middlewares/auth.middleware.js";
 import authRouter from "./routes/auth.router.js";
 import dotenv from "dotenv";
+import toolsRouter from "./routes/tools.router.js";
 
 //Inicializamos las variables de entorno
 dotenv.config();
@@ -22,6 +23,8 @@ const users = [];
 app.use("/api/v2/users", usersRouter);
 
 app.use("/api/v2/auth", authRouter);
+
+app.use("/api/v2/tools", toolsRouter);
 
 app.listen(8080, function () {
     console.log("servidor funcionando")

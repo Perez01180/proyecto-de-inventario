@@ -1,4 +1,4 @@
-import express, { Router } from "express";
+import express from "express";
 import { db } from "../config/firebase.js";
 import bcrypt from "bcrypt";
 import { authMiddleware, adminMiddleware } from "../middlewares/auth.middleware.js";

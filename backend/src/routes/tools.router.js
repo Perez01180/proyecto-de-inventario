@@ -1,9 +1,10 @@
 import express from "express";
 import { db } from "../config/firebase.js";
+import { authMiddleware, adminMiddleware } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.post("/", async function (req, res) {
+router.post("/", authMiddleware, adminMiddleware(["admin", "superadmin"]), async function (req, res) {
     const { name, state, available, quantity, brand, section, serialized } = req.body;
     if (!name || !state || typeof available !== "boolean" || !quantity || !brand || !section || !serialized) {
         return res.status(400).json({
@@ -21,7 +22,7 @@ router.post("/", async function (req, res) {
     })
 })
 
-router.get("/", async function (req, res) {
+router.get("/", authMiddleware, async function (req, res) {
     const toolsDB = await db.collection("tools").get();
     const tools = toolsDB.docs.map((toolsDB) => {
         return { id: toolsDB.id, ...toolsDB.data() }
@@ -34,7 +35,7 @@ router.get("/", async function (req, res) {
     })
 });
 
-router.get("/:id", async function (req, res) {
+router.get("/:id", authMiddleware, async function (req, res) {
     const id = req.params.id;
     const toolsDB = await db.collection("tools").doc(id).get();
 
@@ -55,7 +56,7 @@ router.get("/:id", async function (req, res) {
     })
 })
 
-router.delete("/:id", async function (req, res) {
+router.delete("/:id", authMiddleware, adminMiddleware(["admin", "superadmin"]), async function (req, res) {
     const id = req.params.id;
 
     const toolsRef = db.collection("tools").doc(id);
@@ -75,7 +76,7 @@ router.delete("/:id", async function (req, res) {
     })
 })
 
-router.put("/:id", async function (req, res) {
+router.put("/:id", authMiddleware, adminMiddleware(["admin", "superadmin"]), async function (req, res) {
     const id = req.params.id;
     const { name, state, available, quantity, brand, section, serialized } = req.body;
 

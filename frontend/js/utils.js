@@ -1,5 +1,6 @@
 const API_BASE = "http://localhost:8080/api/v2";
 
+//Auth User
 export async function getUser(id) {
     const response = await fetch(API_BASE + "/users/" + id,{
         method : "get",
@@ -113,4 +114,30 @@ export function deleteSession(){
     localStorage.removeItem("userToken");
     localStorage.removeItem("userRole");
     
+}
+
+//Tools 
+export async function getTools(token){
+    const response = await fetch(API_BASE + "/tools/",{
+        method : "get",
+        headers : {
+            "Authorization" : "Bearer " + token,
+            "content-type" : "application/json"
+        }
+    });
+    const data = await response.json();
+    return data;
+}
+
+export async function createTool(newTool, token){
+    const response = await fetch(API_BASE + "/tools/",{
+        method : "post",
+        headers : {
+            "Authorization" : "Bearer " + token,
+            "content-type" : "application/json"
+        },
+        body : JSON.stringify({ ...newTool  })
+    });
+    const data = await response.json();
+    return data;
 }

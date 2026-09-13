@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post("/", authMiddleware, adminMiddleware(["admin", "superadmin"]), async function (req, res) {
     const { name, state, available, quantity, brand, section, serialized } = req.body;
-    if (!name || !state || typeof available !== "boolean" || !quantity || !brand || !section || !serialized) {
+    if (!name || !state || !available || !quantity || !brand || !section || !serialized) {
         return res.status(400).json({
             status: "error",
             message: "Falta completar campos"

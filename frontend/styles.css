@@ -50,3 +50,7 @@ body {
 .mostrar-nav{
     display: block;
 }
+
+.ocultar{
+    display: none;
+}

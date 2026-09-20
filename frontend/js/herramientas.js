@@ -6,8 +6,15 @@ function addTool(token) {
         theme: "dark",
         html: `
             <input id = "swal-name" placeholder = "nombre de herramienta">
-            <input id = "swal-state" placeholder = "Estado de la herramienta">
-            <input id = "swal-available" placeholder = "Herramientas disponibles">
+            <select id = "swal-state" placeholder = "Estado de la herramienta">
+                <option value = "malo">Malo</option>
+                <option value = "normal" selected>Normal</option>
+                <option value = "muy_bueno">Muy bueno</option>
+            </select>
+            <select id = "swal-available" placeholder = "Herramientas disponibles">
+                <option value = "true" selected>Disponible</option>
+                <option value = "false">No disponible</option>
+            </select>
             <input id = "swal-quantity" placeholder = "Cantidad de herramientas">
             <input id = "swal-brand" placeholder = "Marca de la herramienta">
             <input id = "swal-section" placeholder = "Sección de la herramienta">
@@ -41,8 +48,17 @@ function addTool(token) {
         if(result.isConfirmed){
             const newTool = result.value;
             const response = await createTool(newTool, token);
-            console.log(response);
-            //window.location = "/herramientas.html";
+            if(response.status == "error"){
+                Swal.fire({
+                    title : "ERROR",
+                    theme : "dark",
+                    text : "Faltó completar campos",
+                    icon : "warning"
+                })
+                return;
+            }
+
+            window.location = "/herramientas.html";
         }
     })
 }
@@ -51,9 +67,14 @@ function addTool(token) {
 async function main() {
     const token = getToken();
     const myUserData = await getMyUser(token);
+    const buttonNewTool = document.getElementById("buttonNewTool");   
 
     if (myUserData.status === "error") {
         window.location.href = "/index.html";
+    }
+    
+    if(myUserData.payload.role === "user"){
+        buttonNewTool.classList.add("d-none")
     }
 
     const tools = await getTools(token);

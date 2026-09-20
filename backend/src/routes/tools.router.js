@@ -5,7 +5,7 @@ import { authMiddleware, adminMiddleware } from "../middlewares/auth.middleware.
 const router = express.Router();
 
 router.post("/", authMiddleware, adminMiddleware(["admin", "superadmin"]), async function (req, res) {
-    const { name, state, available, quantity, brand, section, serialized } = req.body;
+    let { name, state, available, quantity, brand, section, serialized } = req.body;
     if (!name || !state || !available || !quantity || !brand || !section || !serialized) {
         return res.status(400).json({
             status: "error",
@@ -13,6 +13,9 @@ router.post("/", authMiddleware, adminMiddleware(["admin", "superadmin"]), async
         })
 
     }
+    quantity = Number(quantity);
+    available = available === "true"
+
     const docRef = await db.collection("tools").add({ name, state, available, quantity, brand, section, serialized });
 
     res.status(201).json({

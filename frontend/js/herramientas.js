@@ -1,4 +1,78 @@
-import { getToken, getMyUser, getTools, createTool } from "./utils.js";
+import { getToken, getMyUser, getTools, createTool, updateToolByID, deleteTool } from "./utils.js";
+
+function confirmDeleteTool(id, token) {
+    Swal.fire({
+        title: "Eliminar herramienta",
+        theme: "dark",
+        text: "¿Estás seguro de querer eliminar esta herramienta?",
+        icon: "warning",
+        showCancelButton: true,
+
+    }).then(async function (result) {
+        if (result.isConfirmed) {
+            await deleteTool(id, token);
+            window.location = "/herramientas.html";
+        }
+    })
+
+}
+
+
+async function modifyTool(tool, token) {
+    Swal.fire({
+        title: "Editar herramienta",
+        theme: "dark",
+        html: `
+            <input id = "swal-name" value = ${tool.name} placeholder = "nombre de herramienta">
+            <select id = "swal-state" value = ${tool.state} placeholder = "Estado de la herramienta">
+                <option value = "malo">Malo</option>
+                <option value = "normal" selected>Normal</option>
+                <option value = "muy_bueno">Muy bueno</option>
+            </select>
+            <select id = "swal-available" value = ${tool.available} placeholder = "Herramientas disponibles">
+                <option value = "true" selected>Disponible</option>
+                <option value = "false">No disponible</option>
+            </select>
+            <input id = "swal-quantity" value = ${tool.quantity} placeholder = "Cantidad de herramientas">
+            <input id = "swal-brand" value = ${tool.brand} placeholder = "Marca de la herramienta">
+            <input id = "swal-section" value = ${tool.section} placeholder = "Sección de la herramienta">
+            <input id = "swal-serialized" value = ${tool.serialized} placeholder = "Serialización de la herramienta">
+        `,
+        showConfirmButton: true,
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: "Guardar cambios",
+        denyButtonText: "eliminar herramienta",
+        cancelButtonText: "cancelar",
+        preConfirm: function () {
+            const name = document.getElementById("swal-name").value;
+            const state = document.getElementById("swal-state").value;
+            const available = document.getElementById("swal-available").value;
+            const quantity = document.getElementById("swal-quantity").value;
+            const brand = document.getElementById("swal-brand").value;
+            const section = document.getElementById("swal-section").value;
+            const serialized = document.getElementById("swal-serialized").value;
+            return {
+                name,
+                state,
+                available,
+                quantity,
+                brand,
+                section,
+                serialized
+            }
+        }
+    }).then(async function (result){
+        if(result.isConfirmed){
+            const updatesTool = result.value;
+            const response = await updateToolByID(tool.id, updatesTool, token);
+            window.location = "/herramientas.html"
+        } else if(result.isDenied){
+            confirmDeleteTool(tool.id, token);
+        }
+
+    })
+}
 
 function addTool(token) {
     Swal.fire({
@@ -44,16 +118,16 @@ function addTool(token) {
                 serialized
             }
         }
-    }).then(async function (result){
-        if(result.isConfirmed){
+    }).then(async function (result) {
+        if (result.isConfirmed) {
             const newTool = result.value;
             const response = await createTool(newTool, token);
-            if(response.status == "error"){
+            if (response.status == "error") {
                 Swal.fire({
-                    title : "ERROR",
-                    theme : "dark",
-                    text : "Faltó completar campos",
-                    icon : "warning"
+                    title: "ERROR",
+                    theme: "dark",
+                    text: "Faltó completar campos",
+                    icon: "warning"
                 })
                 return;
             }
@@ -67,13 +141,13 @@ function addTool(token) {
 async function main() {
     const token = getToken();
     const myUserData = await getMyUser(token);
-    const buttonNewTool = document.getElementById("buttonNewTool");   
+    const buttonNewTool = document.getElementById("buttonNewTool");
 
     if (myUserData.status === "error") {
         window.location.href = "/index.html";
     }
-    
-    if(myUserData.payload.role === "user"){
+
+    if (myUserData.payload.role === "user") {
         buttonNewTool.classList.add("d-none")
     }
 
@@ -92,6 +166,7 @@ async function main() {
         const brand = document.createElement("td");
         const section = document.createElement("td");
         const serialized = document.createElement("td");
+        const actionCell = document.createElement("td");
 
         nameCell.textContent = tool.name
         stateCell.textContent = tool.state
@@ -101,7 +176,16 @@ async function main() {
         section.textContent = tool.section
         serialized.textContent = tool.serialized
 
-        row.append(nameCell, stateCell, available, quantity, brand, section, serialized);
+        if (myUserData.payload.role === "superadmin" || myUserData.payload.role === "admin") {
+            const modifyButton = document.createElement("button");
+            modifyButton.textContent = "Modificar";
+            modifyButton.className = "btn btn-secondary mx-3";
+            modifyButton.addEventListener("click", function () { modifyTool(tool, token) });
+            actionCell.appendChild(modifyButton);
+        }
+
+
+        row.append(nameCell, stateCell, available, quantity, brand, section, serialized, actionCell);
 
         toolsList.appendChild(row);
     });

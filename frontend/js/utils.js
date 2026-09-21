@@ -141,3 +141,28 @@ export async function createTool(newTool, token){
     const data = await response.json();
     return data;
 }
+
+export async function deleteTool(id, token){
+    const response = await fetch(API_BASE + "/tools/" + id, {
+        method : "delete",
+        headers : {
+            "Authorization" : "Bearer " + token,
+            "content-type" : "application/json"
+        },
+    });
+    const data = await response.json();
+    return data;
+}
+
+export async function updateToolByID(id, updates, token){
+    const response = await fetch(API_BASE + "/tools/" + id, {
+        method : "put",
+        headers : {
+            "Authorization" : "Bearer " + token,
+            "content-type" : "application/json"
+        },
+        body : JSON.stringify(updates)
+    });
+    const data = await response.json();
+    return data;
+}

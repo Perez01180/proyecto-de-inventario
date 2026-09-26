@@ -17,26 +17,48 @@ function confirmDeleteTool(id, token) {
 
 }
 
-
 async function modifyTool(tool, token) {
     Swal.fire({
         title: "Editar herramienta",
         theme: "dark",
         html: `
-            <input id = "swal-name" value = ${tool.name} placeholder = "nombre de herramienta">
-            <select id = "swal-state" value = ${tool.state} placeholder = "Estado de la herramienta">
-                <option value = "malo">Malo</option>
-                <option value = "normal" selected>Normal</option>
-                <option value = "muy_bueno">Muy bueno</option>
-            </select>
-            <select id = "swal-available" value = ${tool.available} placeholder = "Herramientas disponibles">
-                <option value = "true" selected>Disponible</option>
-                <option value = "false">No disponible</option>
-            </select>
-            <input id = "swal-quantity" value = ${tool.quantity} placeholder = "Cantidad de herramientas">
-            <input id = "swal-brand" value = ${tool.brand} placeholder = "Marca de la herramienta">
-            <input id = "swal-section" value = ${tool.section} placeholder = "Sección de la herramienta">
-            <input id = "swal-serialized" value = ${tool.serialized} placeholder = "Serialización de la herramienta">
+            <div class="row g-3 text-start">
+                <div class="col-6">
+                    <label class="form-label text-secondary" for="swal-name"  >Nombre de la herramienta</label>
+                    <input id = "swal-name" class="form-control" value = ${tool.name} placeholder = "nombre de herramienta">
+                </div>
+                <div class="col-6">
+                    <label class="form-label text-secondary" for="swal-state">Estado</label>
+                    <select id = "swal-state" class="form-select" value = ${tool.state} placeholder = "Estado de la herramienta">
+                        <option value = "malo">Malo</option>
+                        <option value = "normal" selected>Normal</option>
+                        <option value = "muy_bueno">Muy bueno</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <label class="form-label text-secondary" for="swal-available">Herramienta</label>
+                    <select id = "swal-available" class="form-select" value = ${tool.available} placeholder = "Herramientas disponibles">
+                        <option value = "true" selected>Disponible</option>
+                        <option value = "false">No disponible</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <label class="form-label text-secondary" for="swal-quantity">Cantidad</label>
+                    <input id = "swal-quantity" class="form-control" value = ${tool.quantity} placeholder = "Cantidad de herramientas">
+                </div>
+                <div class="col-6">
+                    <label class="form-label text-secondary" for="swal-brand">Marca</label>
+                    <input id = "swal-brand" class="form-control" value = ${tool.brand} placeholder = "Marca de la herramienta">
+                </div>
+                <div class="col-6">
+                    <label class="form-label text-secondary" for="swal-section">Sección</label>
+                    <input id = "swal-section" class="form-control" value = ${tool.section} placeholder = "Sección de la herramienta">
+                </div>
+                <div class="col-12">
+                    <label class="form-label text-secondary" for="swal-serialized">Serialización</label>
+                    <input id = "swal-serialized" class="form-control" value = ${tool.serialized} placeholder = "Serialización de la herramienta">
+                </div>
+            </div>
         `,
         showConfirmButton: true,
         showDenyButton: true,
@@ -79,21 +101,43 @@ function addTool(token) {
         title: "Añadir herramienta",
         theme: "dark",
         html: `
-            <input id = "swal-name" placeholder = "nombre de herramienta">
-            <select id = "swal-state" placeholder = "Estado de la herramienta">
-                <option value = "malo">Malo</option>
-                <option value = "normal" selected>Normal</option>
-                <option value = "muy_bueno">Muy bueno</option>
-            </select>
-            <select id = "swal-available" placeholder = "Herramientas disponibles">
-                <option value = "true" selected>Disponible</option>
-                <option value = "false">No disponible</option>
-            </select>
-            <input id = "swal-quantity" placeholder = "Cantidad de herramientas">
-            <input id = "swal-brand" placeholder = "Marca de la herramienta">
-            <input id = "swal-section" placeholder = "Sección de la herramienta">
-            <input id = "swal-serialized" placeholder = "Serialización de la herramienta">
-
+            <div class="row g-3 text-start">
+                <div class="col-6">
+                    <label class="form-label text-secondary" for="swal-name"  >Nombre de la herramienta</label>
+                    <input id = "swal-name" class="form-control" placeholder = "nombre de herramienta">
+                </div>
+                <div class="col-6">
+                    <label class="form-label text-secondary" for="swal-state">Estado</label>
+                    <select id = "swal-state" class="form-select" placeholder = "Estado de la herramienta">
+                        <option value = "malo">Malo</option>
+                        <option value = "normal" selected>Normal</option>
+                        <option value = "muy_bueno">Muy bueno</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <label class="form-label text-secondary" for="swal-available">Herramienta</label>
+                    <select id = "swal-available" class="form-select" placeholder = "Herramientas disponibles">
+                        <option value = "true" selected>Disponible</option>
+                        <option value = "false">No disponible</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <label class="form-label text-secondary" for="swal-quantity">Cantidad</label>
+                    <input id = "swal-quantity" class="form-control" placeholder = "Cantidad de herramientas">
+                </div>
+                <div class="col-6">
+                    <label class="form-label text-secondary" for="swal-brand">Marca</label>
+                    <input id = "swal-brand" class="form-control" placeholder = "Marca de la herramienta">
+                </div>
+                <div class="col-6">
+                    <label class="form-label text-secondary" for="swal-section">Sección</label>
+                    <input id = "swal-section" class="form-control" placeholder = "Sección de la herramienta">
+                </div>
+                <div class="col-12">
+                    <label class="form-label text-secondary" for="swal-serialized">Serialización</label>
+                    <input id = "swal-serialized" class="form-control" placeholder = "Serialización de la herramienta">
+                </div>
+            </div>
         `,
         showConfirmButton: true,
         showCancelButton: true,

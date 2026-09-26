@@ -35,6 +35,63 @@ function confirmRoleChange(user, role, token) {
 
 }
 
+function modifyUser(user, token) {
+    Swal.fire({
+        title: "Editar usuario",
+        theme: "dark",
+        html: `
+                            <div class="row g-3">
+                                <div class="col-6" >
+                                    <input id = "swal-name" class="form-control" placeholder="nombre..." value = ${user.name} >
+                                </div>
+                                <div class="col-6">
+                                    <input id = "swal-lastname" class="form-control" placeholder="apellido..." value = ${user.lastname} >
+                                </div>
+                                <div class="col-6">
+                                    <input id = "swal-dni" class="form-control" placeholder="123456789" value = ${user.dni} >
+                                </div>
+                                <div class="col-6">
+                                    <input id = "swal-username" class="form-control" placeholder="nombre del usuario" value = ${user.username} >
+                                </div>
+                                <div class="col-12">
+                                    <input id = "swal-password" class="form-control" placeholder = "Nueva contraseña" >
+                                </div>
+                            </div>
+                       `,
+        showConfirmButton: true,
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: "Guardar cambios",
+        denyButtonText: "eliminar usuario",
+        cancelButtonText: "cancelar",
+        preConfirm: function () {
+            const name = document.getElementById("swal-name").value;
+            const lastname = document.getElementById("swal-lastname").value;
+            const dni = document.getElementById("swal-dni").value;
+            const username = document.getElementById("swal-username").value;
+            const password = document.getElementById("swal-password").value;
+            return {
+                name,
+                lastname,
+                dni,
+                username,
+                password
+            }
+        }
+
+    }).then(async function (result) {
+        if (result.isConfirmed) {
+            const updates = result.value;
+
+            const response = await updateUserById(user.id, updates, token);
+            window.location = "/administracion.html";
+
+        } else if (result.isDenied) {
+            confirmDeleteUser(user.id, token);
+        }
+    })
+}
+
 async function main() {
     const token = getToken();
     const myUserData = await getMyUser(token);
@@ -49,15 +106,24 @@ async function main() {
 
     usersList.innerHTML = "";
 
+    //se inserta columna de acción solo para el superadmin
+    if (myUserData.payload.role === "superadmin") {
+        const adminTr = document.getElementById("admin-tr")
+        adminTr.innerHTML += ` <th>acción</th> `
+    }
 
     users.map((user) => {
         const row = document.createElement("tr");
         const usernameCell = document.createElement("td");
         const roleCell = document.createElement("td");
+        const nameCell = document.createElement("td");
+        const lastnameCell = document.createElement("td");
         usernameCell.textContent = user.username;
+        nameCell.textContent = user.name;
+        lastnameCell.textContent = user.lastname;
         if (user.role === "superadmin") {
             roleCell.textContent = user.role
-            row.append(usernameCell, roleCell);
+            row.append(usernameCell, roleCell, nameCell, lastnameCell);
         } else {
             const actionCell = document.createElement("td");
             const roleSelect = document.createElement("select");
@@ -75,58 +141,15 @@ async function main() {
                 const modifyButton = document.createElement("button");
                 modifyButton.textContent = "Modificar";
                 modifyButton.className = "btn btn-secondary mx-3"
-                modifyButton.addEventListener("click", async function () {
-                    Swal.fire({
-                        title: "Editar usuario",
-                        theme: "dark",
-                        html: `
-                            <input id = "swal-name" value = ${user.name} >
-                            <input id = "swal-lastname" value = ${user.lastname} >
-                            <input id = "swal-dni" value = ${user.dni} >
-                            <input id = "swal-username" value = ${user.username} >
-                            <input id = "swal-password" placeholder = "Nueva contraseña" >
-                       `,
-                        showConfirmButton: true,
-                        showDenyButton: true,
-                        showCancelButton: true,
-                        confirmButtonText: "Guardar cambios",
-                        denyButtonText: "eliminar usuario",
-                        cancelButtonText: "cancelar",
-                        preConfirm: function () {
-                            const name = document.getElementById("swal-name").value;
-                            const lastname = document.getElementById("swal-lastname").value;
-                            const dni = document.getElementById("swal-dni").value;
-                            const username = document.getElementById("swal-username").value;
-                            const password = document.getElementById("swal-password").value;
-                            return {
-                                name,
-                                lastname,
-                                dni,
-                                username,
-                                password
-                            }
-                        }
 
-                    }).then(async function (result) {
-                        if (result.isConfirmed) {
-                            const updates = result.value;
-
-                            const response = await updateUserById(user.id, updates, token);
-                            window.location = "/administracion.html";
-
-                        } else if (result.isDenied) {
-                            confirmDeleteUser(user.id, token);
-                        }
-                    })
-                })
-
+                modifyButton.addEventListener("click", function () { modifyUser(user, token) });
                 actionCell.appendChild(modifyButton);
             }
 
 
             roleCell.appendChild(roleSelect);
 
-            row.append(usernameCell, roleCell, actionCell);
+            row.append(usernameCell, roleCell, nameCell, lastnameCell, actionCell);
 
             roleSelect.addEventListener("change", async function (event) {
                 confirmRoleChange(user, roleSelect, token);

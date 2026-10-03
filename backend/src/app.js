@@ -6,6 +6,7 @@ import { authMiddleware, adminMiddleware } from "./middlewares/auth.middleware.j
 import authRouter from "./routes/auth.router.js";
 import dotenv from "dotenv";
 import toolsRouter from "./routes/tools.router.js";
+import ordersRouter from "./routes/orders.router.js";
 
 //Inicializamos las variables de entorno
 dotenv.config();
@@ -25,6 +26,8 @@ app.use("/api/v2/users", usersRouter);
 app.use("/api/v2/auth", authRouter);
 
 app.use("/api/v2/tools", toolsRouter);
+
+app.use("/api/v2/orders", ordersRouter);
 
 app.listen(8080, function () {
     console.log("servidor funcionando")

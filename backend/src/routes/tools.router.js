@@ -5,8 +5,8 @@ import { authMiddleware, adminMiddleware } from "../middlewares/auth.middleware.
 const router = express.Router();
 
 router.post("/", authMiddleware, adminMiddleware(["admin", "superadmin"]), async function (req, res) {
-    let { name, state, available, quantity, brand, section, serialized } = req.body;
-    if (!name || !state || !available || !quantity || !brand || !section || !serialized) {
+    let { name, state, available, quantity, brand, section, serialized, consumable } = req.body;
+    if (!name || !state || !available || !quantity || !brand || !section || !serialized || !consumable) {
         return res.status(400).json({
             status: "error",
             message: "Falta completar campos"
@@ -15,8 +15,9 @@ router.post("/", authMiddleware, adminMiddleware(["admin", "superadmin"]), async
     }
     quantity = Number(quantity);
     available = available === "true"
+    consumable = consumable === "true"
 
-    const docRef = await db.collection("tools").add({ name, state, available, quantity, brand, section, serialized });
+    const docRef = await db.collection("tools").add({ name, state, available, quantity, brand, section, serialized, consumable });
 
     res.status(201).json({
         status: "success",
@@ -81,7 +82,7 @@ router.delete("/:id", authMiddleware, adminMiddleware(["admin", "superadmin"]), 
 
 router.put("/:id", authMiddleware, adminMiddleware(["admin", "superadmin"]), async function (req, res) {
     const id = req.params.id;
-    const { name, state, available, quantity, brand, section, serialized } = req.body;
+    const { name, state, available, quantity, brand, section, serialized, consumable } = req.body;
 
     const toolsRef = db.collection("tools").doc(id);
     const tool = await toolsRef.get();
@@ -92,7 +93,7 @@ router.put("/:id", authMiddleware, adminMiddleware(["admin", "superadmin"]), asy
             message: "Herramienta no encontrada"
         })
     }
-    await toolsRef.update({ name, state, available, quantity, brand, section, serialized });
+    await toolsRef.update({ name, state, available, quantity, brand, section, serialized, consumable });
 
     res.status(200).json({
         status: "success",
@@ -105,7 +106,8 @@ router.put("/:id", authMiddleware, adminMiddleware(["admin", "superadmin"]), asy
             quantity,
             brand,
             section,
-            serialized
+            serialized,
+            consumable
         }
     })
 

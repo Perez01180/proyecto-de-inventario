@@ -31,14 +31,14 @@ async function modifyTool(tool, token) {
                     <label class="form-label text-secondary" for="swal-state">Estado</label>
                     <select id = "swal-state" class="form-select" value = ${tool.state} placeholder = "Estado de la herramienta">
                         <option value = "malo">Malo</option>
-                        <option value = "normal" selected>Normal</option>
+                        <option value = "normal">Normal</option>
                         <option value = "muy_bueno">Muy bueno</option>
                     </select>
                 </div>
                 <div class="col-6">
                     <label class="form-label text-secondary" for="swal-available">Herramienta</label>
                     <select id = "swal-available" class="form-select" value = ${tool.available} placeholder = "Herramientas disponibles">
-                        <option value = "true" selected>Disponible</option>
+                        <option value = "true">Disponible</option>
                         <option value = "false">No disponible</option>
                     </select>
                 </div>
@@ -54,9 +54,16 @@ async function modifyTool(tool, token) {
                     <label class="form-label text-secondary" for="swal-section">Sección</label>
                     <input id = "swal-section" class="form-control" value = ${tool.section} placeholder = "Sección de la herramienta">
                 </div>
-                <div class="col-12">
+                <div class="col-6">
                     <label class="form-label text-secondary" for="swal-serialized">Serialización</label>
                     <input id = "swal-serialized" class="form-control" value = ${tool.serialized} placeholder = "Serialización de la herramienta">
+                </div>
+                <div class="col-6">
+                    <label class="form-label text-secondary" for="swal-consumable">Consumible</label>
+                    <select id = "swal-consumable" class="form-select" value = ${tool.consumable} placeholder = "Consumible">
+                        <option value = "true">Es consumible</option>
+                        <option value = "false" selected>No es consumible</option>
+                    </select>
                 </div>
             </div>
         `,
@@ -74,6 +81,7 @@ async function modifyTool(tool, token) {
             const brand = document.getElementById("swal-brand").value;
             const section = document.getElementById("swal-section").value;
             const serialized = document.getElementById("swal-serialized").value;
+            const consumable = document.getElementById("swal-consumable").value;
             return {
                 name,
                 state,
@@ -81,7 +89,8 @@ async function modifyTool(tool, token) {
                 quantity,
                 brand,
                 section,
-                serialized
+                serialized,
+                consumable
             }
         }
     }).then(async function (result){
@@ -133,9 +142,16 @@ function addTool(token) {
                     <label class="form-label text-secondary" for="swal-section">Sección</label>
                     <input id = "swal-section" class="form-control" placeholder = "Sección de la herramienta">
                 </div>
-                <div class="col-12">
+                <div class="col-6">
                     <label class="form-label text-secondary" for="swal-serialized">Serialización</label>
                     <input id = "swal-serialized" class="form-control" placeholder = "Serialización de la herramienta">
+                </div>
+                <div class="col-6">
+                    <label class="form-label text-secondary" for="swal-consumable">Consumible</label>
+                    <select id = "swal-consumable" class="form-select" placeholder = "Consumible">
+                        <option value = "true">Es consumible</option>
+                        <option value = "false" selected>No es consumible</option>
+                    </select>
                 </div>
             </div>
         `,
@@ -152,6 +168,7 @@ function addTool(token) {
             const brand = document.getElementById("swal-brand").value;
             const section = document.getElementById("swal-section").value;
             const serialized = document.getElementById("swal-serialized").value;
+            const consumable = document.getElementById("swal-consumable").value;
             return {
                 name,
                 state,
@@ -159,7 +176,8 @@ function addTool(token) {
                 quantity,
                 brand,
                 section,
-                serialized
+                serialized,
+                consumable
             }
         }
     }).then(async function (result) {
@@ -210,6 +228,7 @@ async function main() {
         const brand = document.createElement("td");
         const section = document.createElement("td");
         const serialized = document.createElement("td");
+        const consumable = document.createElement("td");
         const actionCell = document.createElement("td");
 
         nameCell.textContent = tool.name
@@ -219,6 +238,7 @@ async function main() {
         brand.textContent = tool.brand
         section.textContent = tool.section
         serialized.textContent = tool.serialized
+        consumable.textContent = tool.consumable
 
         if (myUserData.payload.role === "superadmin" || myUserData.payload.role === "admin") {
             const modifyButton = document.createElement("button");
@@ -229,7 +249,7 @@ async function main() {
         }
 
 
-        row.append(nameCell, stateCell, available, quantity, brand, section, serialized, actionCell);
+        row.append(nameCell, stateCell, available, quantity, brand, section, serialized, consumable, actionCell);
 
         toolsList.appendChild(row);
     });

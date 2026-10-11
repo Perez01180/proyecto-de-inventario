@@ -166,3 +166,16 @@ export async function updateToolByID(id, updates, token){
     const data = await response.json();
     return data;
 }
+
+//Orders
+export async function getOrders(token){
+    const response = await fetch(API_BASE + "/orders/",{
+        method : "get",
+        headers : {
+            "Authorization" : "Bearer " + token,
+            "content-type" : "application/json"
+        },
+    })
+    const data = await response.json();
+    return data;
+}

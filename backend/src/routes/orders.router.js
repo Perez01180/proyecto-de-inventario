@@ -79,7 +79,7 @@ router.get("/", authMiddleware, adminMiddleware(["admin", "superadmin"]), async 
         orders.push({
             id : orderDoc.id,
             state : order.status,
-            createdAt : new Date(),
+            createdAt : new Date(order.createdAt.seconds *1000).toLocaleString("es-AR"),
             user : {
                 id : userDoc.id,
                 name :user.name

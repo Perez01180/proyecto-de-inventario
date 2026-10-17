@@ -1,4 +1,4 @@
-import { getMyUser, getToken, deleteSession, getOrders } from "./utils.js";
+import { getMyUser, getToken, deleteSession, getUsers, getTools, getOrders, createOrder } from "./utils.js";
 
 async function createTableOrders(token) {
     const orders = await getOrders(token);
@@ -74,6 +74,114 @@ async function createTableOrders(token) {
     });
 }
 
+async function addOrder(token) {
+    const usersList = await getUsers(token);
+    const toolsList = await getTools(token);
+    const selectedTools = [];
+
+    Swal.fire({
+        title: "Añadir herramienta",
+        theme: "dark",
+        html: `
+            <div class="row g-3 text-start">
+                <div class="col-12">
+                    <label class="form-label text-secondary" for="swal-teacher"  >Nombre del profesor</label>
+                    <input id = "swal-teacher" class="form-control" list= "usersList" placeholder = "nombre...">
+                    <datalist id = "usersList" >
+                        ${usersList.map(function (user) {
+                            return `<option value="${user.name} ${user.lastname}"></option>`
+                        }).join("")}
+                    </datalist>
+                </div>
+                <div class="col-12">
+                    <label class="form-label text-secondary" for="swal-tool"  >Nombre de la herramienta</label>
+                    <input id = "swal-tool" class="form-control" list= "toolsList" placeholder = "nombre...">
+                    <datalist id = "toolsList" >
+                        ${toolsList.payload.map(function (tool) {
+                            return `<option value="${tool.name}"></option>`
+                        }).join("")}
+                    </datalist>
+                    <label class = "form-label mt-3"> Cantidad </label>
+                    <input id="quantity" type="number" class="form-control" min = "1" value = "1">
+                    <button id ="addTool" type = "button" class="btn btn-primary mt-3" > Agregar herramienta </button>
+                    <div id = "selectedTools" class = "mt-3">
+                    
+                    </div>
+
+                </div>
+
+                
+            </div>
+        `,
+        showConfirmButton: true,
+        showCancelButton: true,
+
+        ConfirmButtonText: "Crear pedido",
+        cancelButtonText: "cancelar",
+        didOpen: function () {
+            document.getElementById("addTool").addEventListener("click", function () {
+                const name = document.getElementById("swal-tool").value;
+                const quantity = Number(document.getElementById("quantity").value);
+                const tool = toolsList.payload.find(function (tooldata) {
+                    return tooldata.name === name
+                })
+                selectedTools.push({
+                    toolId: tool.id,
+                    quantityOrder: quantity
+                })
+                const divSelectedTools = document.getElementById("selectedTools")
+                divSelectedTools.innerHTML = "";
+
+                console.log(selectedTools)
+                selectedTools.forEach(function(tooldata){
+                    const tool = toolsList.payload.find(function(t){
+                        return t.id === tooldata.toolId
+                    })
+                    console.log(tool)
+                    divSelectedTools.innerHTML+=
+                    `
+                    <p class = "border-bottom py-2">${tool.name} - x ${tooldata.quantityOrder}</p>
+                    `
+                })
+
+
+
+            })
+        },
+
+        preConfirm: function () {
+            const fullName = document.getElementById("swal-teacher").value;
+            const teacher = usersList.find(function (user) {
+                return `${user.name} ${user.lastname}` === fullName
+            })
+            return {
+                teacherId: teacher.id,
+                tools : selectedTools,
+                state : "pendiente"
+            }
+        }
+
+    }).then(async function (result) {
+        if (result.isConfirmed) {
+            const newOrder = result.value;
+            const response = await createOrder(newOrder, token)
+            
+            if (response.status == "error") {
+                Swal.fire({
+                    title: "ERROR",
+                    theme: "dark",
+                    text: "Faltó completar campos",
+                    icon: "warning"
+                })
+                return;
+            }
+
+            
+        }
+    })
+
+}
+
 async function main() {
     const token = getToken();
     if (token) {
@@ -98,5 +206,10 @@ async function main() {
 
         createTableOrders(token);
     }
+
+    const buttonAddOrder = document.getElementById("buttonAddOrder");
+    buttonAddOrder.addEventListener("click", function () {
+        addOrder(token);
+    })
 }
 main();

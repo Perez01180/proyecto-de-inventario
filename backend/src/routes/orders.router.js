@@ -6,8 +6,8 @@ import { authMiddleware, adminMiddleware} from "../middlewares/auth.middleware.j
 const router = express.Router();
 
 router.post("/", authMiddleware, adminMiddleware(["admin", "superadmin"]), async function (req, res) {
-    const { teacherId, tools, status } = req.body;
-    if (!teacherId || !tools || !status) {
+    const { teacherId, tools, state } = req.body;
+    if (!teacherId || !tools || !state) {
         res.status(400).json({
             status: "error",
             message: "faltan campos en el pedido"
@@ -34,7 +34,7 @@ router.post("/", authMiddleware, adminMiddleware(["admin", "superadmin"]), async
         userId : req.user.id,
         teacherId,
         tools,
-        status,
+        state,
         createdAt : new Date(),
         updatedAt : null
     }
@@ -78,7 +78,7 @@ router.get("/", authMiddleware, adminMiddleware(["admin", "superadmin"]), async 
 
         orders.push({
             id : orderDoc.id,
-            state : order.status,
+            state : order.state,
             createdAt : new Date(order.createdAt.seconds *1000).toLocaleString("es-AR"),
             user : {
                 id : userDoc.id,

@@ -1,8 +1,50 @@
-import { getMyUser, getToken, deleteSession, getUsers, getTools, getOrders, createOrder } from "./utils.js";
+import { getMyUser, getToken, deleteSession, getUsers, getTools, getOrders, createOrder, getOrderById, completeOrderById } from "./utils.js";
+//Se arregló de sumar la cantidad si se añade otra herramienta en el pedido y falta completar el boton de completar pedido
+async function completeOrder(id, token) {
+    const orderData = await getOrderById(id, token);
+    const toolsData = orderData.payload.tools
+    console.log(toolsData)
+
+    Swal.fire({
+        title: "Completar pedido",
+        theme: "dark",
+        html: `
+            <div class="row g-3 text-start p-5">
+                ${toolsData.map(function (tool) {
+            return `
+                        <div class = "col-12 row">
+                            <div class = "col-6 ">
+                                <p class="form-control">${tool.name}</p> 
+                            </div>
+                            
+                            <div class = "col-6">
+                                <p  class="form-control">${tool.quantityOrder}</p>
+                            </div>
+                        </div>
+                        `
+        })
+            }
+
+
+            </div>
+        
+        `,
+        showConfirmButton: true,
+        showCancelButton: true,
+
+    }).then(async function (result) {
+        if (result.isConfirmed) {
+            const response = await completeOrderById(id, token);
+            window.location = "/index.html"
+            console.log(response)
+        }
+    })
+
+}
+
 
 async function createTableOrders(token) {
     const orders = await getOrders(token);
-    console.log(orders);
     const ordersList = document.getElementById("ordersList");
     let finalOrdersList = ""
     orders.payload.forEach(function (order) {
@@ -58,7 +100,7 @@ async function createTableOrders(token) {
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center pt-2">
-                            <button class="btn btn-sm btn-outline-light">Completar pedido</button>
+                            <button class="btn btn-sm btn-outline-light complete-order-btn" data-id="${order.id}">Completar pedido</button>
                         </div>
                         
                     </div>
@@ -68,6 +110,12 @@ async function createTableOrders(token) {
         `
     })
     ordersList.innerHTML = finalOrdersList
+    ordersList.querySelectorAll(".complete-order-btn").forEach(function (button) {
+        button.addEventListener("click", function () {
+            completeOrder(button.dataset.id, token);
+        });
+    });
+
     const collapseElementList = ordersList.querySelectorAll('.collapse');
     collapseElementList.forEach(collapseEl => {
         new bootstrap.Collapse(collapseEl, { toggle: false });
@@ -89,8 +137,8 @@ async function addOrder(token) {
                     <input id = "swal-teacher" class="form-control" list= "usersList" placeholder = "nombre...">
                     <datalist id = "usersList" >
                         ${usersList.map(function (user) {
-                            return `<option value="${user.name} ${user.lastname}"></option>`
-                        }).join("")}
+            return `<option value="${user.name} ${user.lastname}"></option>`
+        }).join("")}
                     </datalist>
                 </div>
                 <div class="col-12">
@@ -98,8 +146,8 @@ async function addOrder(token) {
                     <input id = "swal-tool" class="form-control" list= "toolsList" placeholder = "nombre...">
                     <datalist id = "toolsList" >
                         ${toolsList.payload.map(function (tool) {
-                            return `<option value="${tool.name}"></option>`
-                        }).join("")}
+            return `<option value="${tool.name}"></option>`
+        }).join("")}
                     </datalist>
                     <label class = "form-label mt-3"> Cantidad </label>
                     <input id="quantity" type="number" class="form-control" min = "1" value = "1">
@@ -125,21 +173,26 @@ async function addOrder(token) {
                 const tool = toolsList.payload.find(function (tooldata) {
                     return tooldata.name === name
                 })
-                selectedTools.push({
-                    toolId: tool.id,
-                    quantityOrder: quantity
+                const foundTool = selectedTools.findIndex(function (tooldata) {
+                    return tooldata.toolId === tool.id
                 })
+                if (foundTool === -1) {
+                    selectedTools.push({
+                        toolId: tool.id,
+                        quantityOrder: quantity
+                    })
+                } else {
+                    selectedTools[foundTool].quantityOrder += quantity
+                }
                 const divSelectedTools = document.getElementById("selectedTools")
                 divSelectedTools.innerHTML = "";
 
-                console.log(selectedTools)
-                selectedTools.forEach(function(tooldata){
-                    const tool = toolsList.payload.find(function(t){
+                selectedTools.forEach(function (tooldata) {
+                    const tool = toolsList.payload.find(function (t) {
                         return t.id === tooldata.toolId
                     })
-                    console.log(tool)
-                    divSelectedTools.innerHTML+=
-                    `
+                    divSelectedTools.innerHTML +=
+                        `
                     <p class = "border-bottom py-2">${tool.name} - x ${tooldata.quantityOrder}</p>
                     `
                 })
@@ -156,8 +209,8 @@ async function addOrder(token) {
             })
             return {
                 teacherId: teacher.id,
-                tools : selectedTools,
-                state : "pendiente"
+                tools: selectedTools,
+                state: "pendiente"
             }
         }
 
@@ -165,7 +218,7 @@ async function addOrder(token) {
         if (result.isConfirmed) {
             const newOrder = result.value;
             const response = await createOrder(newOrder, token)
-            
+
             if (response.status == "error") {
                 Swal.fire({
                     title: "ERROR",
@@ -175,8 +228,9 @@ async function addOrder(token) {
                 })
                 return;
             }
+            window.location = "/index.html";
 
-            
+
         }
     })
 

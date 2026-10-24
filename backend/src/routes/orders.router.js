@@ -1,6 +1,6 @@
 import express from "express"
 import { db } from "../config/firebase.js";
-import { authMiddleware, adminMiddleware} from "../middlewares/auth.middleware.js";
+import { authMiddleware, adminMiddleware } from "../middlewares/auth.middleware.js";
 
 
 const router = express.Router();
@@ -31,28 +31,28 @@ router.post("/", authMiddleware, adminMiddleware(["admin", "superadmin"]), async
     }
 
     const order = {
-        userId : req.user.id,
+        userId: req.user.id,
         teacherId,
         tools,
         state,
-        createdAt : new Date(),
-        updatedAt : null
+        createdAt: new Date(),
+        updatedAt: null
     }
 
     const orderRef = await db.collection("orders").add(order);
     res.status(201).json({
-        status : "success",
-        message : "Pedido creado",
-        payload : order
+        status: "success",
+        message: "Pedido creado",
+        payload: order
     })
 
 })
 
 
-router.get("/", authMiddleware, adminMiddleware(["admin", "superadmin"]), async function (req, res){
+router.get("/", authMiddleware, adminMiddleware(["admin", "superadmin"]), async function (req, res) {
     const ordersDB = await db.collection("orders").get();
     const orders = []
-    for(const orderDoc of ordersDB.docs){
+    for (const orderDoc of ordersDB.docs) {
         const order = orderDoc.data();
 
         const teacherDoc = await db.collection("users").doc(order.teacherId).get();
@@ -62,40 +62,104 @@ router.get("/", authMiddleware, adminMiddleware(["admin", "superadmin"]), async 
         const user = userDoc.data();
 
         const tools = []
-        for(const item of order.tools){
+        for (const item of order.tools) {
             const toolDoc = await db.collection("tools").doc(item.toolId).get();
             const tool = toolDoc.data();
             tools.push({
-                id : toolDoc.id,
-                name : tool.name,
-                state : tool.state,
-                brand : tool.brand,
-                serialized : tool.serialized,
-                consumable : tool.consumable,
-                quantityOrder : item.quantityOrder
+                id: toolDoc.id,
+                name: tool.name,
+                state: tool.state,
+                brand: tool.brand,
+                serialized: tool.serialized,
+                consumable: tool.consumable,
+                quantityOrder: item.quantityOrder
             })
         }
 
         orders.push({
-            id : orderDoc.id,
-            state : order.state,
-            createdAt : new Date(order.createdAt.seconds *1000).toLocaleString("es-AR"),
-            user : {
-                id : userDoc.id,
-                name :user.name
+            id: orderDoc.id,
+            state: order.state,
+            createdAt: new Date(order.createdAt.seconds * 1000).toLocaleString("es-AR"),
+            user: {
+                id: userDoc.id,
+                name: user.name
             },
-            teacher : {
-                id : teacherDoc.id,
-                name : teacher.name
+            teacher: {
+                id: teacherDoc.id,
+                name: teacher.name
             },
             tools
         })
 
     }
     res.status(200).json({
-        status : "success",
-        message : "Lista de pedidos",
-        payload : orders
+        status: "success",
+        message: "Lista de pedidos",
+        payload: orders
     })
+})
+
+router.get("/:id", async function (req, res) {
+    const orderId = req.params.id;
+
+    const orderRef = db.collection("orders").doc(orderId);
+    const order = await orderRef.get();
+    if (!order.exists) {
+        return res.status(404).json({
+            status: "error",
+            message: "Pedido no encontrado"
+        })
+    }
+
+    const tools = []
+    for (const item of order.data().tools) {
+        const toolDoc = await db.collection("tools").doc(item.toolId).get();
+        const tool = toolDoc.data();
+        tools.push({
+            id: toolDoc.id,
+            name: tool.name,
+            state: tool.state,
+            brand: tool.brand,
+            serialized: tool.serialized,
+            consumable: tool.consumable,
+            quantityOrder: item.quantityOrder
+        })
+    }
+
+    res.status(200).json({
+        status: "success",
+        message: "orden obtenida",
+        payload: {
+            id: order.id,
+            ...order.data(),
+            tools
+        }
+    })
+
+
+})
+
+router.put("/:id", authMiddleware, adminMiddleware(["admin", "superadmin"]), async function (req, res) {
+    const orderId = req.params.id;
+
+    const orderRef = db.collection("orders").doc(orderId);
+    const order = await orderRef.get();
+    if (!order.exists) {
+        return res.status(404).json({
+            status: "error",
+            message: "Pedido no encontrado"
+        })
+    }
+    await orderRef.update({ state: "completado" })
+
+    res.status(200).json({
+        status: "success",
+        message: "Pedido completado",
+        payload: {
+            id: orderRef.id,
+            state: "completado"
+        }
+    })
+
 })
 export default router;

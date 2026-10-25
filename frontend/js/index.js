@@ -2,27 +2,62 @@ import { getMyUser, getToken, deleteSession, getUsers, getTools, getOrders, crea
 //Se arregló de sumar la cantidad si se añade otra herramienta en el pedido y falta completar el boton de completar pedido
 async function completeOrder(id, token) {
     const orderData = await getOrderById(id, token);
-    const toolsData = orderData.payload.tools
+    const toolsData = orderData.payload.tools.map(function (tool) {
+        console.log(tool)
+        const pending = Number(tool.quantityOrder) - Number(tool.quantityReturned)
+        return {
+            toolId: tool.id,
+            name: tool.name,
+            quantityPending: pending,
+            quantityToReturn: pending
+        }
+    })
     console.log(toolsData)
 
     Swal.fire({
         title: "Completar pedido",
         theme: "dark",
+        didOpen : function(){
+          const popup = Swal.getPopup()
+          popup.querySelectorAll(".subtrack-btn").forEach(function(button){
+            button.addEventListener("click", function(){
+                const index = button.dataset.index;
+                const tool = toolsData[index];
+                if(tool.quantityToReturn > 0){
+                    tool.quantityToReturn--
+                }
+                popup.querySelector(` #quantity-${index} `).textContent = tool.quantityToReturn
+            })
+          })
+          
+          popup.querySelectorAll(".add-btn").forEach(function(button){
+            button.addEventListener("click", function(){
+                const index = button.dataset.index;
+                const tool = toolsData[index];
+                if(tool.quantityToReturn < tool.quantityPending){
+                    tool.quantityToReturn++
+                }
+                popup.querySelector(` #quantity-${index} `).textContent = tool.quantityToReturn
+            })
+          })
+        },
         html: `
             <div class="row g-3 text-start p-5">
-                ${toolsData.map(function (tool) {
+                ${toolsData.map(function (tool, index) {
             return `
-                        <div class = "col-12 row">
+                        <div class = "row g-2 align-items-center mb-3">
                             <div class = "col-6 ">
-                                <p class="form-control">${tool.name}</p> 
+                                ${tool.name}
                             </div>
                             
-                            <div class = "col-6">
-                                <p  class="form-control">${tool.quantityOrder}</p>
+                            <div class = "col-6 d-flex align-items-center gap-2">
+                                <button type="button" class = "btn btn-outline-secondary subtrack-btn" data-index="${index}"> - </button>
+                                <p  class="form-control text-center mb-0" id = "quantity-${index}">${tool.quantityToReturn}</p>
+                                <button type="button" class = "btn btn-outline-secondary add-btn" data-index="${index}"> + </button>
                             </div>
                         </div>
                         `
-        })
+        }).join("")
             }
 
 
@@ -34,8 +69,15 @@ async function completeOrder(id, token) {
 
     }).then(async function (result) {
         if (result.isConfirmed) {
-            const response = await completeOrderById(id, token);
-            window.location = "/index.html"
+           
+            const tools = toolsData.map(function(tool){
+                return{
+                    toolId : tool.toolId,
+                    quantityToReturn : tool.quantityToReturn
+                }
+            })
+            const response = await completeOrderById(id, token, tools);
+            //window.location = "/index.html"
             console.log(response)
         }
     })

@@ -193,13 +193,14 @@ export async function createOrder(newOrder, token) {
     return data;
 }
 
-export async function completeOrderById(id, token) {
+export async function completeOrderById(id, token, tools) {
     const response = await fetch(API_BASE + "/orders/" + id, {
         method: "put",
         headers: {
             "Authorization": "Bearer " + token,
             "content-type": "application/json"
-        }
+        },
+        body: JSON.stringify({ tools })
     })
     const data = await response.json();
     return data;

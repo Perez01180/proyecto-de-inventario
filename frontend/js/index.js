@@ -77,7 +77,7 @@ async function completeOrder(id, token) {
                 }
             })
             const response = await completeOrderById(id, token, tools);
-            //window.location = "/index.html"
+            window.location = "/index.html"
             console.log(response)
         }
     })
@@ -97,6 +97,8 @@ async function createTableOrders(token) {
                     <td class="ps-3 text-light">${tool.name}</td>
                     <td class="text-center text-muted">${tool.brand}</td>
                     <td class="text-end text-muted pe-3">${tool.quantityOrder}</td>
+                    <td class="text-end text-muted pe-3">${tool.quantityReturned}</td>
+                    <td class="text-end text-muted pe-3">${tool.quantityOrder - tool.quantityReturned}</td>
                     <td class="text-end text-light fw-medium pe-3">${tool.state}</td>
                 </tr>
             `
@@ -131,7 +133,9 @@ async function createTableOrders(token) {
                                     <tr>
                                         <th scope="col" class="ps-3">Herramienta</th>
                                         <th scope="col" class="text-center">Marca</th>
-                                        <th scope="col" class="text-end pe-3">Cantidad</th>
+                                        <th scope="col" class="text-end pe-3">Prestado</th>
+                                        <th scope="col" class="text-end pe-3">Devuelto</th>
+                                        <th scope="col" class="text-end pe-3">Pendiente</th>
                                         <th scope="col" class="text-end pe-3">Estado</th>
                                     </tr>
                                 </thead>
@@ -209,15 +213,24 @@ async function addOrder(token) {
         ConfirmButtonText: "Crear pedido",
         cancelButtonText: "cancelar",
         didOpen: function () {
+            const inputQuantity = document.getElementById("quantity")
             document.getElementById("addTool").addEventListener("click", function () {
                 const name = document.getElementById("swal-tool").value;
-                const quantity = Number(document.getElementById("quantity").value);
+                const quantity = Number(inputQuantity.value);
                 const tool = toolsList.payload.find(function (tooldata) {
                     return tooldata.name === name
                 })
                 const foundTool = selectedTools.findIndex(function (tooldata) {
                     return tooldata.toolId === tool.id
                 })
+                if(quantity > tool.quantity || (selectedTools[foundTool]?.quantityOrder + quantity) > tool.quantity){
+                    Toastify({
+                        text : `Superaste el stock total de  : ${tool.quantity} ${tool.name}`,
+                        className : "error",
+                        style : { background: "#99020C" }
+                    }).showToast()
+                    return;
+                }
                 if (foundTool === -1) {
                     selectedTools.push({
                         toolId: tool.id,
@@ -293,12 +306,11 @@ async function main() {
             })
 
         }
-
-        const mainIndex = document.getElementById("main-index");
-        const p = document.createElement("p");
-        p.innerText = "bienvenido " + dataUser.payload.username + " Tu rol es " + dataUser.payload.role;
-
-        mainIndex.appendChild(p);
+        const divWelcome = document.getElementById("welcome");
+        const h5 = document.createElement("h5")
+        h5.innerText = `Bienvenido ${dataUser.payload.username}, Tu rol es ${dataUser.payload.role}.`
+        divWelcome.innerHTML = "";
+        divWelcome.appendChild(h5);
 
         createTableOrders(token);
     }

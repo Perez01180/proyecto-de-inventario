@@ -82,21 +82,24 @@ router.get("/", authMiddleware, adminMiddleware(["admin", "superadmin"]), async 
                 quantityReturned: item.quantityReturned || 0
             })
         }
+        
+        if(order.state === "pendiente"){
+            orders.push({
+                id: orderDoc.id,
+                state: order.state,
+                createdAt: new Date(order.createdAt.seconds * 1000).toLocaleString("es-AR"),
+                user: {
+                    id: userDoc.id,
+                    name: user.name
+                },
+                teacher: {
+                    id: teacherDoc.id,
+                    name: teacher.name
+                },
+                tools
+            })
+        }
 
-        orders.push({
-            id: orderDoc.id,
-            state: order.state,
-            createdAt: new Date(order.createdAt.seconds * 1000).toLocaleString("es-AR"),
-            user: {
-                id: userDoc.id,
-                name: user.name
-            },
-            teacher: {
-                id: teacherDoc.id,
-                name: teacher.name
-            },
-            tools
-        })
 
     }
     res.status(200).json({

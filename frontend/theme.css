@@ -1,0 +1,641 @@
+/* =====================================================
+   SISTEMA DE PAÑOL — OCEAN BLUE
+   Tema global para Bootstrap 5.3.x
+   Cargar DESPUÉS de Bootstrap y styles.css.
+   ===================================================== */
+
+/* 1. Tokens y variables Bootstrap */
+[data-bs-theme="dark"] {
+  --ocean-base: #071927;
+  --ocean-nav: #081622;
+  --ocean-surface: #102a40;
+  --ocean-surface-raised: #071d2b;
+  --ocean-panel: #05141f;
+  --ocean-border: #20506a;
+  --ocean-accent: #00c8f8;
+  --ocean-accent-soft: white;
+  --ocean-text: #f1f7fc;
+  --ocean-muted: #b1c6d4;
+
+  --bs-body-bg: var(--ocean-base);
+  --bs-body-color: var(--ocean-text);
+  --bs-primary: var(--ocean-accent);
+  --bs-primary-rgb: 0, 200, 248;
+  --bs-info: var(--ocean-accent);
+  --bs-info-rgb: 0, 200, 248;
+  --bs-secondary-color: var(--ocean-muted);
+  --bs-secondary-color-rgb: 177, 198, 212;
+  --bs-secondary-bg: var(--ocean-surface);
+  --bs-tertiary-bg: var(--ocean-nav);
+  --bs-border-color: var(--ocean-border);
+  --bs-border-color-translucent: rgba(32, 80, 106, .6);
+  --bs-emphasis-color: #fff;
+  --bs-link-color: var(--ocean-accent);
+  --bs-link-hover-color: #64dfff;
+  --bs-link-color-rgb: 0, 200, 248;
+  --bs-link-hover-color-rgb: 100, 223, 255;
+}
+
+/* 2. Fondo ambiental: sólo body, sin afectar navbar */
+body[data-bs-theme="dark"] {
+  background:
+    radial-gradient(ellipse 65% 45% at 50% 35%, rgba(18, 83, 120, .35), transparent 100%),
+    radial-gradient(ellipse 45% 55% at 100% 85%, rgba(0, 105, 145, .16), transparent 100%),
+    radial-gradient(ellipse 50% 40% at 0% 5%, rgba(25, 65, 105, .20), transparent 100%),
+    linear-gradient(160deg, #06121e 0%, #0a2032 48%, #040d17 100%) !important;
+  background-attachment: fixed !important;
+  min-height: 100vh;
+  color: var(--ocean-text);
+}
+
+/* 3. Navbar y superficies Bootstrap */
+[data-bs-theme="dark"] .navbar.bg-dark,
+[data-bs-theme="dark"] .navbar {
+  background: var(--ocean-nav) !important;
+  border-bottom-color: var(--ocean-border) !important;
+}
+[data-bs-theme="dark"] .navbar-brand { color: var(--ocean-text); font-weight: 600; }
+[data-bs-theme="dark"] .navbar .nav-link { color: #b8cedc; }
+[data-bs-theme="dark"] .navbar .nav-link:hover,
+[data-bs-theme="dark"] .navbar .nav-link:focus { color: var(--ocean-accent); }
+[data-bs-theme="dark"] .navbar .nav-link.active { color: #fff; }
+[data-bs-theme="dark"] .bg-dark:not(body):not(.navbar) { background-color: var(--ocean-nav) !important; }
+[data-bs-theme="dark"] .bg-body-tertiary { background-color: var(--ocean-nav) !important; }
+[data-bs-theme="dark"] .bg-body-secondary { background-color: var(--ocean-surface) !important; }
+[data-bs-theme="dark"] .bg-secondary { background-color: var(--ocean-surface-raised) !important; }
+[data-bs-theme="dark"] .border-secondary { border-color: var(--ocean-border) !important; }
+[data-bs-theme="dark"] .text-secondary,
+[data-bs-theme="dark"] .text-muted { color: var(--ocean-muted) !important; }
+[data-bs-theme="dark"] .text-info { color: #65dcf8 !important; }
+[data-bs-theme="dark"] .text-light-emphasis { color: #b8cedc !important; }
+
+/* 4. Botones Bootstrap: variantes legibles y coherentes */
+[data-bs-theme="dark"] .btn-primary {
+  --bs-btn-color: #071927;
+  --bs-btn-bg: #00a9d6;
+  --bs-btn-border-color: #00a9d6;
+  --bs-btn-hover-color: #071927;
+  --bs-btn-hover-bg: #00c8f8;
+  --bs-btn-hover-border-color: #00c8f8;
+  --bs-btn-active-color: #071927;
+  --bs-btn-active-bg: #009bc5;
+  --bs-btn-active-border-color: #009bc5;
+  --bs-btn-focus-shadow-rgb: 0, 200, 248;
+}
+[data-bs-theme="dark"] .btn-outline-primary {
+  --bs-btn-color: #a8eaff;
+  --bs-btn-border-color: #1685ad;
+  --bs-btn-hover-color: #071927;
+  --bs-btn-hover-bg: #00c8f8;
+  --bs-btn-hover-border-color: #00c8f8;
+  --bs-btn-active-color: #071927;
+  --bs-btn-active-bg: #00a9d6;
+  --bs-btn-active-border-color: #00a9d6;
+}
+[data-bs-theme="dark"] .btn-outline-light {
+  --bs-btn-color: #d7eaf5;
+  --bs-btn-border-color: #40718b;
+  --bs-btn-hover-color: #071927;
+  --bs-btn-hover-bg: #00c8f8;
+  --bs-btn-hover-border-color: #00c8f8;
+  --bs-btn-active-color: #071927;
+  --bs-btn-active-bg: #00a9d6;
+  --bs-btn-active-border-color: #00a9d6;
+}
+[data-bs-theme="dark"] .btn-outline-secondary {
+  --bs-btn-color: #d7eaf5;
+  --bs-btn-border-color: #40718b;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #20506a;
+  --bs-btn-hover-border-color: #40718b;
+}
+/* Para botones oscuros se usa texto blanco; los botones celestes
+   mantienen texto oscuro para conservar contraste. */
+[data-bs-theme="dark"] .btn-outline-light:not(:hover):not(:active),
+[data-bs-theme="dark"] .btn-outline-secondary:not(:hover):not(:active) {
+  color: #fff;
+}
+[data-bs-theme="dark"] .btn .nav-link { color: inherit; }
+
+/* 5. Botón Añadir pedido */
+[data-bs-theme="dark"] #buttonAddOrder {
+  background: linear-gradient(135deg, #0d354d, #0a283c);
+  border: 1px solid #1685ad;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-weight: 500;
+  box-shadow: 0 4px 18px rgba(0, 160, 220, .10);
+  transition: background .25s ease, border-color .25s ease,
+              box-shadow .25s ease, transform .25s ease;
+}
+[data-bs-theme="dark"] #buttonAddOrder .nav-link { color: inherit !important; padding: 0; }
+[data-bs-theme="dark"] #buttonAddOrder:hover {
+  background: linear-gradient(135deg, #125475, #0d3c57);
+  border-color: var(--ocean-accent);
+  color: #fff;
+  box-shadow: 0 5px 22px rgba(0, 200, 248, .20);
+  transform: translateY(-2px);
+}
+[data-bs-theme="dark"] #buttonAddOrder:active { transform: translateY(0); }
+
+/* 6. Acordeones en todas las páginas */
+[data-bs-theme="dark"] .accordion {
+  --bs-accordion-bg: var(--ocean-nav);
+  --bs-accordion-color: var(--ocean-text);
+  --bs-accordion-border-color: var(--ocean-border);
+  --bs-accordion-btn-bg: var(--ocean-nav);
+  --bs-accordion-btn-color: var(--ocean-text);
+  --bs-accordion-active-bg: var(--ocean-surface-raised);
+  --bs-accordion-active-color: var(--ocean-text);
+  --bs-accordion-btn-focus-box-shadow: 0 0 0 .2rem rgba(0, 200, 248, .15);
+  --bs-accordion-btn-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2300c8f8' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'%3E%3Cpath d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
+  --bs-accordion-btn-active-icon: var(--bs-accordion-btn-icon);
+}
+[data-bs-theme="dark"] .accordion-item {
+  background: var(--ocean-nav);
+  border-color: var(--ocean-border);
+}
+[data-bs-theme="dark"] .accordion-button { background: var(--ocean-nav); color: var(--ocean-text); }
+[data-bs-theme="dark"] .accordion-button:hover { background: #103047; }
+[data-bs-theme="dark"] .accordion-button:not(.collapsed) {
+  background: var(--ocean-surface-raised);
+  color: var(--ocean-text);
+  box-shadow: inset 3px 0 0 var(--ocean-accent);
+}
+[data-bs-theme="dark"] .accordion-body { background: var(--ocean-panel); }
+
+/* 7. Pedidos: ajustes específicos del acordeón de inicio */
+[data-bs-theme="dark"] #ordersList .accordion-item {
+  border: 1px solid var(--ocean-border) !important;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .12) !important;
+}
+[data-bs-theme="dark"] #ordersList .accordion-button .text-light { color: var(--ocean-text) !important; }
+[data-bs-theme="dark"] #ordersList .accordion-button .text-light-emphasis { color: #b8cedc !important; }
+[data-bs-theme="dark"] #ordersList .accordion-body,
+[data-bs-theme="dark"] #ordersList .accordion-body.bg-body-tertiary {
+  background: var(--ocean-panel) !important;
+  border-top: 1px solid var(--ocean-border) !important;
+  padding: 20px;
+}
+[data-bs-theme="dark"] #ordersList .accordion-body h6.text-muted {
+  color: var(--ocean-accent-soft) !important;
+  font-weight: 600;
+}
+[data-bs-theme="dark"] #ordersList .complete-order-btn {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #0d354d;
+  --bs-btn-border-color: #1685ad;
+  --bs-btn-hover-color: #071927;
+  --bs-btn-hover-bg: #00c8f8;
+  --bs-btn-hover-border-color: #00c8f8;
+  --bs-btn-active-color: #071927;
+  --bs-btn-active-bg: #00a9d6;
+  --bs-btn-active-border-color: #00a9d6;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 500;
+}
+
+/* 8. Tablas: estados Bootstrap 5.3 sin anular striped/hover */
+[data-bs-theme="dark"] .table {
+  --bs-table-bg: var(--ocean-surface) !important;
+  --bs-table-color: var(--ocean-text);
+  --bs-table-border-color: var(--ocean-border);
+  --bs-table-striped-bg: #14364e;
+  --bs-table-striped-color: var(--ocean-text);
+  --bs-table-hover-bg: #1a435d;
+  --bs-table-hover-color: #fff;
+  color: var(--ocean-text);
+}
+[data-bs-theme="dark"] .table > :not(caption) > * > * {
+  border-bottom-color: var(--ocean-border);
+}
+[data-bs-theme="dark"] .table thead th {
+  --bs-table-bg: #153b54 !important;
+  --bs-table-bg-state: transparent;
+  background-color: #153b54 !important;
+  color: #d5eaf4 !important;
+  font-size: .82rem;
+  font-weight: 600;
+  letter-spacing: .025em;
+  padding: 14px 16px;
+  border-color: #28536c;
+}
+[data-bs-theme="dark"] .table tbody :is(td, th) {
+  padding: 14px 16px;
+  vertical-align: middle;
+}
+[data-bs-theme="dark"] .table-hover tbody tr:hover > * {
+  --bs-table-bg-state: #1a435d;
+}
+[data-bs-theme="dark"] .table-responsive {
+  border: 1px solid var(--ocean-border);
+  border-radius: 12px;
+  overflow-x: auto;
+  background: var(--ocean-surface);
+}
+[data-bs-theme="dark"] .table .text-muted { color: var(--ocean-muted) !important; }
+[data-bs-theme="dark"] .table-group-divider { border-top-color: var(--ocean-border); }
+
+/* Tablas de administración y herramientas (tbody con IDs reales).
+   :has() se aplica al main, NO al body ni a toda la aplicación. */
+[data-bs-theme="dark"] main:has(#usersList) .table-responsive,
+[data-bs-theme="dark"] main:has(#toolsList) .table-responsive {
+  border-color: #28536c;
+  box-shadow: 0 12px 32px rgba(0,0,0,.14);
+}
+[data-bs-theme="dark"] main:has(#usersList) .table,
+[data-bs-theme="dark"] main:has(#toolsList) .table {
+  --bs-table-bg: #102a40 !important;
+  --bs-table-striped-bg: #123149;
+  --bs-table-hover-bg: #1a435d;
+  --bs-table-border-color: #28536c;
+  min-width: 640px;
+  margin-bottom: 0;
+}
+[data-bs-theme="dark"] main:has(#usersList) .table thead th,
+[data-bs-theme="dark"] main:has(#toolsList) .table thead th {
+  white-space: nowrap;
+  padding: 15px 16px;
+}
+[data-bs-theme="dark"] main:has(#usersList) .table tbody tr:last-child > *,
+[data-bs-theme="dark"] main:has(#toolsList) .table tbody tr:last-child > * {
+  border-bottom-width: 0;
+}
+/* La tabla de pedidos tiene su propia variable inline; la prioridad de
+   --bs-table-bg de arriba la supera sin cambiar el JavaScript. */
+[data-bs-theme="dark"] #ordersList .table-responsive {
+  border-radius: 8px;
+}
+[data-bs-theme="dark"] #ordersList .table { margin-bottom: 0; }
+
+/* 9. Formularios y grupos de entrada */
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select,
+[data-bs-theme="dark"] .input-group-text {
+  background-color: var(--ocean-nav);
+  border-color: var(--ocean-border);
+  color: var(--ocean-text);
+}
+[data-bs-theme="dark"] .form-control:focus,
+[data-bs-theme="dark"] .form-select:focus {
+  background-color: var(--ocean-surface);
+  border-color: var(--ocean-accent);
+  color: var(--ocean-text);
+  box-shadow: 0 0 0 .2rem rgba(0, 200, 248, .15);
+}
+[data-bs-theme="dark"] .form-control::placeholder { color: #8da9ba; opacity: 1; }
+[data-bs-theme="dark"] .form-control:disabled,
+[data-bs-theme="dark"] .form-select:disabled {
+  background-color: #102333;
+  color: #91aabb;
+}
+[data-bs-theme="dark"] .form-check-input {
+  background-color: var(--ocean-nav);
+  border-color: #40718b;
+}
+[data-bs-theme="dark"] .form-check-input:checked {
+  background-color: #00a9d6;
+  border-color: #00a9d6;
+}
+
+/* 10. Tarjetas, modales y listados */
+[data-bs-theme="dark"] .card {
+  --bs-card-bg: var(--ocean-nav);
+  --bs-card-color: var(--ocean-text);
+  --bs-card-border-color: var(--ocean-border);
+}
+[data-bs-theme="dark"] .card-header,
+[data-bs-theme="dark"] .card-footer {
+  background: var(--ocean-surface-raised);
+  border-color: var(--ocean-border);
+}
+[data-bs-theme="dark"] .modal-content {
+  background: var(--ocean-nav);
+  color: var(--ocean-text);
+  border: 1px solid var(--ocean-border);
+}
+[data-bs-theme="dark"] .modal-header,
+[data-bs-theme="dark"] .modal-footer { border-color: var(--ocean-border); }
+[data-bs-theme="dark"] .list-group {
+  --bs-list-group-bg: var(--ocean-nav);
+  --bs-list-group-color: var(--ocean-text);
+  --bs-list-group-border-color: var(--ocean-border);
+  --bs-list-group-action-hover-bg: var(--ocean-surface-raised);
+  --bs-list-group-action-hover-color: #fff;
+}
+
+/* 11. Menús, pestañas, alertas y paginación */
+[data-bs-theme="dark"] .dropdown-menu {
+  --bs-dropdown-bg: var(--ocean-nav);
+  --bs-dropdown-color: var(--ocean-text);
+  --bs-dropdown-border-color: var(--ocean-border);
+  --bs-dropdown-link-color: var(--ocean-text);
+  --bs-dropdown-link-hover-bg: var(--ocean-surface-raised);
+  --bs-dropdown-link-hover-color: #fff;
+}
+[data-bs-theme="dark"] .nav-tabs {
+  --bs-nav-tabs-border-color: var(--ocean-border);
+  --bs-nav-tabs-link-active-bg: var(--ocean-surface-raised);
+  --bs-nav-tabs-link-active-color: var(--ocean-accent-soft);
+  --bs-nav-tabs-link-active-border-color: var(--ocean-border);
+}
+[data-bs-theme="dark"] .alert-info {
+  --bs-alert-bg: #0d354d;
+  --bs-alert-color: var(--ocean-accent-soft);
+  --bs-alert-border-color: #1685ad;
+}
+[data-bs-theme="dark"] .pagination {
+  --bs-pagination-bg: var(--ocean-nav);
+  --bs-pagination-color: var(--ocean-accent-soft);
+  --bs-pagination-border-color: var(--ocean-border);
+  --bs-pagination-hover-bg: var(--ocean-surface-raised);
+  --bs-pagination-hover-color: #fff;
+  --bs-pagination-hover-border-color: #1685ad;
+  --bs-pagination-active-bg: #00a9d6;
+  --bs-pagination-active-border-color: #00a9d6;
+}
+
+/* 12. Accesibilidad */
+[data-bs-theme="dark"] :is(.btn, .form-control, .form-select, .nav-link):focus-visible {
+  outline: 2px solid var(--ocean-accent);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-bs-theme="dark"] #buttonAddOrder,
+  [data-bs-theme="dark"] .accordion-button { transition: none; }
+  [data-bs-theme="dark"] #buttonAddOrder:hover { transform: none; }
+}
+
+/* 13. Acciones superiores de gestión */
+[data-bs-theme="dark"] main:has(#usersList) > .d-flex.justify-content-end .btn,
+[data-bs-theme="dark"] #buttonAddTool {
+  background: linear-gradient(135deg, #0d354d, #0a283c);
+  border: 1px solid #1685ad;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-weight: 500;
+  box-shadow: 0 4px 18px rgba(0,160,220,.10);
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+[data-bs-theme="dark"] main:has(#usersList) > .d-flex.justify-content-end .btn:hover,
+[data-bs-theme="dark"] #buttonAddTool:hover {
+  background: #125475;
+  border-color: var(--ocean-accent);
+  color: #fff;
+  transform: translateY(-1px);
+}
+[data-bs-theme="dark"] main:has(#usersList) > .d-flex.justify-content-end .btn .nav-link,
+[data-bs-theme="dark"] #buttonAddTool .nav-link { color: inherit !important; padding: 0; }
+
+/* 14. Inicio de sesión y registro: superficie y floating labels */
+[data-bs-theme="dark"] .form-signin {
+  max-width: 380px;
+  padding: 28px !important;
+  background: rgba(11,34,53,.94);
+  border: 1px solid var(--ocean-border);
+  border-radius: 16px;
+  box-shadow: 0 20px 55px rgba(0,0,0,.22);
+}
+[data-bs-theme="dark"] .form-signin h1 { color: var(--ocean-text); font-weight: 600; }
+[data-bs-theme="dark"] .form-floating > label { color: #a7bdcb; }
+[data-bs-theme="dark"] .form-floating > .form-control:focus ~ label,
+[data-bs-theme="dark"] .form-floating > .form-control:not(:placeholder-shown) ~ label {
+  color: #a8eaff;
+}
+[data-bs-theme="dark"] .form-floating > .form-control:focus ~ label::after,
+[data-bs-theme="dark"] .form-floating > .form-control:not(:placeholder-shown) ~ label::after {
+  background: var(--ocean-nav);
+}
+[data-bs-theme="dark"] .form-signin .btn-primary { margin-top: 8px; border-radius: 9px; }
+
+/* 15. Botones de acciones en tablas y diálogos */
+[data-bs-theme="dark"] .table .btn { border-radius: 8px; font-weight: 500; }
+[data-bs-theme="dark"] .btn-outline-danger {
+  --bs-btn-color: #ffb5bf;
+  --bs-btn-border-color: #a94b60;
+  --bs-btn-hover-bg: #b83d58;
+  --bs-btn-hover-border-color: #b83d58;
+  --bs-btn-hover-color: #fff;
+}
+[data-bs-theme="dark"] .btn-outline-success {
+  --bs-btn-color: #a2f2d0;
+  --bs-btn-border-color: #328c73;
+  --bs-btn-hover-bg: #19745d;
+  --bs-btn-hover-border-color: #19745d;
+  --bs-btn-hover-color: #fff;
+}
+
+/* 16. Móviles */
+@media (max-width: 767.98px) {
+  [data-bs-theme="dark"] main:has(#usersList) .table :is(th, td),
+  [data-bs-theme="dark"] main:has(#toolsList) .table :is(th, td) {
+    padding: 12px 13px;
+    font-size: .875rem;
+  }
+  [data-bs-theme="dark"] #ordersList .accordion-body { padding: 14px; }
+  [data-bs-theme="dark"] .form-signin { padding: 22px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-bs-theme="dark"] #buttonAddTool,
+  [data-bs-theme="dark"] main:has(#usersList) > .d-flex.justify-content-end .btn {
+    transition: none;
+  }
+}
+
+
+/* =====================================================
+   17. AJUSTES FINALES — TIPOGRAFÍA Y LEGIBILIDAD
+   ===================================================== */
+[data-bs-theme="dark"] {
+  --bs-body-font-size: 1rem;
+  --bs-body-line-height: 1.55;
+  --bs-btn-font-size: 1rem;
+  --bs-btn-font-weight: 500;
+  --bs-table-color: var(--ocean-text);
+}
+body[data-bs-theme="dark"] { font-size: 1rem; line-height: 1.55; }
+[data-bs-theme="dark"] main h1 { font-size: clamp(1.65rem, 2.4vw, 2.15rem); letter-spacing: -.02em; }
+[data-bs-theme="dark"] main p,
+[data-bs-theme="dark"] main label,
+[data-bs-theme="dark"] main .btn { font-size: 1rem; }
+[data-bs-theme="dark"] .table { font-size: .975rem; }
+[data-bs-theme="dark"] .table thead th { font-size: .91rem; letter-spacing: .015em; }
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select { font-size: 1rem; min-height: 42px; }
+
+/* =====================================================
+   18. LOGIN Y REGISTRO — FLOATING LABELS
+   Bootstrap usa el placeholder como detector de campo vacío.
+   Ocultarlo visualmente evita que se superponga con el label.
+   ===================================================== */
+body[data-bs-theme="dark"] .form-signin { max-width: 420px; width: min(100% - 24px, 420px); }
+body[data-bs-theme="dark"] .form-signin .form-floating { margin-bottom: 12px; }
+body[data-bs-theme="dark"] .form-signin .form-floating > .form-control {
+  height: calc(3.5rem + 2px);
+  min-height: calc(3.5rem + 2px);
+  padding: 1rem .9rem;
+  border: 1px solid #2b5670;
+  border-radius: 9px !important;
+  margin-bottom: 0 !important;
+  background-color: #102a40;
+  color: #f1f7fc;
+  font-size: 1rem;
+}
+body[data-bs-theme="dark"] .form-signin .form-floating > .form-control::placeholder {
+  color: transparent !important;
+  opacity: 0 !important;
+}
+body[data-bs-theme="dark"] .form-signin .form-floating > label {
+  padding: 1rem .9rem;
+  color: #c1d3df !important;
+  font-size: 1rem !important;
+  opacity: 1;
+}
+body[data-bs-theme="dark"] .form-signin .form-floating > .form-control:focus,
+body[data-bs-theme="dark"] .form-signin .form-floating > .form-control:not(:placeholder-shown) {
+  padding-top: 1.625rem;
+  padding-bottom: .625rem;
+}
+body[data-bs-theme="dark"] .form-signin .form-floating > .form-control:focus ~ label,
+body[data-bs-theme="dark"] .form-signin .form-floating > .form-control:not(:placeholder-shown) ~ label {
+  color: #a8eaff !important;
+  opacity: 1;
+}
+body[data-bs-theme="dark"] .form-signin .form-floating > .form-control:focus ~ label::after,
+body[data-bs-theme="dark"] .form-signin .form-floating > .form-control:not(:placeholder-shown) ~ label::after {
+  background-color: #102a40 !important;
+}
+body[data-bs-theme="dark"] .form-signin .form-control:focus {
+  border-color: #00c8f8;
+  box-shadow: 0 0 0 .2rem rgba(0,200,248,.15);
+}
+body[data-bs-theme="dark"] .form-signin h1 { font-size: 1.75rem; margin-bottom: 1.5rem !important; }
+body[data-bs-theme="dark"] .form-signin .btn[type="submit"] {
+  min-height: 46px;
+  margin-top: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* =====================================================
+   19. TABLAS DE ADMINISTRACIÓN Y HERRAMIENTAS
+   Ambos tbody tienen IDs propios; los selects y botones se
+   crean dinámicamente sin clases de Bootstrap.
+   ===================================================== */
+body[data-bs-theme="dark"] .table:has(#usersList),
+body[data-bs-theme="dark"] .table:has(#toolsList) {
+  margin-bottom: 0;
+  min-width: 620px;
+  --bs-table-bg: #102a40 !important;
+  --bs-table-striped-bg: #133149;
+  --bs-table-hover-bg: #1b435c;
+  --bs-table-color: #f1f7fc;
+  --bs-table-border-color: #28536c;
+}
+body[data-bs-theme="dark"] .table-responsive:has(#usersList),
+body[data-bs-theme="dark"] .table-responsive:has(#toolsList) {
+  background: #102a40;
+  border: 1px solid #28536c;
+  border-radius: 12px;
+  overflow-x: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,.13);
+}
+body[data-bs-theme="dark"] .table:has(#usersList) thead th,
+body[data-bs-theme="dark"] .table:has(#toolsList) thead th {
+  background-color: #153b54;
+  color: #d5eaf4;
+  font-weight: 650;
+  white-space: nowrap;
+  padding: 15px 16px;
+}
+body[data-bs-theme="dark"] :is(#usersList, #toolsList) > tr > :is(td,th) {
+  padding: 13px 16px;
+  vertical-align: middle;
+  color: #f1f7fc;
+}
+
+/* SELECT de rol creado por administracion.js sin .form-select */
+body[data-bs-theme="dark"] #usersList select,
+body[data-bs-theme="dark"] #toolsList select {
+  appearance: none;
+  -webkit-appearance: none;
+  min-width: 145px;
+  max-width: 100%;
+  min-height: 42px;
+  padding: 9px 38px 9px 13px;
+  border: 1px solid #36708c;
+  border-radius: 8px;
+  background-color: #0b283c;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%2387ddf2' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m3 6 5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+  color: #f1f7fc;
+  font: inherit;
+  font-size: .95rem;
+  cursor: pointer;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+body[data-bs-theme="dark"] #usersList select:hover,
+body[data-bs-theme="dark"] #toolsList select:hover { border-color: #00c8f8; }
+body[data-bs-theme="dark"] #usersList select:focus-visible,
+body[data-bs-theme="dark"] #toolsList select:focus-visible {
+  outline: none;
+  border-color: #00c8f8;
+  box-shadow: 0 0 0 .2rem rgba(0,200,248,.17);
+}
+body[data-bs-theme="dark"] #usersList select option,
+body[data-bs-theme="dark"] #toolsList select option {
+  color: #f1f7fc;
+  background: #0b2235;
+}
+
+/* Botón Modificar: JS le asigna btn btn-secondary mx-3 */
+body[data-bs-theme="dark"] :is(#usersList, #toolsList) .btn-secondary {
+  --bs-btn-bg: #0d354d;
+  --bs-btn-border-color: #2681a5;
+  --bs-btn-color: #fff;
+  --bs-btn-hover-bg: #15516d;
+  --bs-btn-hover-border-color: #00c8f8;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: #0d3c57;
+  --bs-btn-active-border-color: #00a9d6;
+  --bs-btn-active-color: #fff;
+  --bs-btn-focus-shadow-rgb: 0,200,248;
+  padding: 8px 15px;
+  min-height: 39px;
+  border-radius: 8px;
+  font-size: .95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+}
+body[data-bs-theme="dark"] :is(#usersList, #toolsList) .btn-secondary:focus-visible {
+  outline: 2px solid #00c8f8;
+  outline-offset: 2px;
+}
+
+/* Botones de acción superiores */
+body[data-bs-theme="dark"] #buttonAddTool,
+body[data-bs-theme="dark"] main:has(#usersList) .justify-content-end > .btn {
+  font-size: 1rem;
+  min-height: 44px;
+}
+
+/* =====================================================
+   20. AJUSTES RESPONSIVOS
+   ===================================================== */
+@media (max-width: 767.98px) {
+  body[data-bs-theme="dark"] .form-signin { padding: 22px !important; }
+  body[data-bs-theme="dark"] .table:has(#toolsList) { min-width: 950px; }
+  body[data-bs-theme="dark"] .table:has(#usersList) { min-width: 620px; }
+  body[data-bs-theme="dark"] :is(#usersList,#toolsList) .btn-secondary.mx-3 {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
